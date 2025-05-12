@@ -1,59 +1,36 @@
+// script.js
 document.addEventListener('DOMContentLoaded', function() {
-    // Объявление hljs
-    const hljs = window.hljs;
-
     // Инициализация подсветки синтаксиса
-    hljs.highlightAll();
-
+    document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+    
     // Переменные
     const sidebar = document.getElementById('sidebar');
     const topicLinks = document.querySelectorAll('.topics li');
     const topicContent = document.getElementById('topic-content');
     const prevButton = document.getElementById('prev-topic');
     const nextButton = document.getElementById('next-topic');
+    const progressIndicator = document.getElementById('progress-indicator');
+    const progressText = document.getElementById('progress-text');
     const searchInput = document.getElementById('search-input');
     const searchButton = document.getElementById('search-button');
     const searchResults = document.getElementById('search-results');
     const themeToggleBtn = document.getElementById('theme-toggle-btn');
     const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-    const progressIndicator = document.getElementById('progress-indicator');
-    const progressText = document.getElementById('progress-text');
-
-    // Темы
-    const topics = [
-        'introduction',
-        'installation',
-        'project-creation',
-        'models',
-        'views',
-        'templates',
-        'urls',
-        'forms',
-        'admin',
-        'users',
-        'migrations',
-        'rest-framework',
-        'testing',
-        'deployment',
-        'best-practices'
-    ];
-
+    
     // Текущая тема
     let currentTopicIndex = 0;
-
-    // Прогресс
-    let completedTopics = JSON.parse(localStorage.getItem('completedTopics')) || [];
-    updateProgress();
-
+    const topics = Array.from(topicLinks).map(link => link.getAttribute('data-topic'));
+    
     // Загрузка темы
-    function loadTopic(topicId) {
-        const template = document.getElementById(`${topicId}-template`);
-        
+    function loadTopic(topicName) {
+        const template = document.getElementById(`${topicName}-template`);
         if (template) {
             topicContent.innerHTML = template.innerHTML;
             
             // Инициализация подсветки синтаксиса для нового контента
-            document.querySelectorAll('pre code').forEach((block) => {
+            topicContent.querySelectorAll('pre code').forEach((block) => {
                 hljs.highlightBlock(block);
             });
             
@@ -63,31 +40,45 @@ document.addEventListener('DOMContentLoaded', function() {
             // Инициализация тестов
             initQuizzes();
             
-            // Отметка темы как прочитанной
-            if (!completedTopics.includes(topicId)) {
-                completedTopics.push(topicId);
-                localStorage.setItem('completedTopics', JSON.stringify(completedTopics));
-                updateProgress();
+            // Обновление активной темы в сайдбаре
+            topicLinks.forEach(link => {
+                if (link.getAttribute('data-topic') === topicName) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+            
+            // Обновление индекса текущей темы
+            currentTopicIndex = topics.indexOf(topicName);
+            
+            // Обновление кнопок навигации
+            updateNavigationButtons();
+            
+            // Обновление прогресса
+            updateProgress();
+            
+            // Прокрутка вверх
+            window.scrollTo(0, 0);
+            
+            // Закрытие мобильного меню после выбора темы
+            if (window.innerWidth <= 768) {
+                sidebar.classList.remove('active');
             }
-        } else {
-            topicContent.innerHTML = '<div class="warning-box"><h3>Тема в разработке</h3><p>Эта тема находится в разработке и будет доступна в ближайшее время.</p></div>';
         }
-        
-        // Обновление активной темы в меню
-        topicLinks.forEach(link => {
-            link.classList.remove('active');
-            if (link.dataset.topic === topicId) {
-                link.classList.add('active');
-            }
-        });
-        
-        // Обновление кнопок навигации
-        currentTopicIndex = topics.indexOf(topicId);
+    }
+    
+    // Обновление кнопок навигации
+    function updateNavigationButtons() {
         prevButton.disabled = currentTopicIndex === 0;
         nextButton.disabled = currentTopicIndex === topics.length - 1;
-        
-        // Прокрутка к началу контента
-        topicContent.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    // Обновление прогресса
+    function updateProgress() {
+        const progress = ((currentTopicIndex + 1) / topics.length) * 100;
+        progressIndicator.style.width = `${progress}%`;
+        progressText.textContent = `${Math.round(progress)}% завершено`;
     }
     
     // Инициализация вкладок
@@ -96,36 +87,23 @@ document.addEventListener('DOMContentLoaded', function() {
         
         tabHeaders.forEach(header => {
             header.addEventListener('click', function() {
-                const tabId = this.dataset.tab;
+                const tabName = this.getAttribute('data-tab');
                 const tabContainer = this.closest('.tabs');
                 
-                // Деактивация всех вкладок
-                tabContainer.querySelectorAll('.tab-header').forEach(h => h.classList.remove('active'));
-                tabContainer.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                
-                // Активация выбранной вкладки
+                // Активация заголовка вкладки
+                tabContainer.querySelectorAll('.tab-header').forEach(h => {
+                    h.classList.remove('active');
+                });
                 this.classList.add('active');
-                tabContainer.querySelector(`.tab-content[data-tab="${tabId}"]`).classList.add('active');
-            });
-        });
-        
-        // Инициализация вложенных вкладок
-        const subTabHeaders = document.querySelectorAll('.sub-tabs .tab-header');
-        
-        subTabHeaders.forEach(header => {
-            header.addEventListener('click', function(e) {
-                e.stopPropagation(); // Предотвращаем всплытие события
                 
-                const tabId = this.dataset.tab;
-                const tabContainer = this.closest('.sub-tabs');
-                
-                // Деактивация всех вкладок
-                tabContainer.querySelectorAll('.tab-header').forEach(h => h.classList.remove('active'));
-                tabContainer.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                
-                // Активация выбранной вкладки
-                this.classList.add('active');
-                tabContainer.querySelector(`.tab-content[data-tab="${tabId}"]`).classList.add('active');
+                // Активация содержимого вкладки
+                tabContainer.querySelectorAll('.tab-content').forEach(content => {
+                    if (content.getAttribute('data-tab') === tabName) {
+                        content.classList.add('active');
+                    } else {
+                        content.classList.remove('active');
+                    }
+                });
             });
         });
     }
@@ -138,77 +116,149 @@ document.addEventListener('DOMContentLoaded', function() {
             const checkButton = quiz.querySelector('.check-answers');
             const questions = quiz.querySelectorAll('.question');
             const resultsDiv = quiz.querySelector('.quiz-results');
-            const topicId = quiz.dataset.topic;
             
-            checkButton.addEventListener('click', function() {
-                let correctCount = 0;
-                
-                questions.forEach((question, index) => {
-                    const selectedOption = question.querySelector('input[type="radio"]:checked');
-                    const feedbackDiv = question.querySelector('.feedback');
+            // Правильные ответы для каждой темы
+            const correctAnswers = {
+                'introduction': ['b', 'c', 'c'],
+                'installation': ['c', 'b', 'c'],
+                'project-creation': ['b', 'c', 'b'],
+                'models': ['b', 'b', 'a'],
+                'views': ['b', 'b', 'b'],
+                'templates': ['b', 'c', 'b'],
+                'urls': ['c', 'a', 'b'],
+                'forms': ['b', 'c', 'a'],
+                'admin': ['c', 'b', 'a'],
+                'users': ['b', 'a', 'c'],
+                'migrations': ['a', 'c', 'b'],
+                'rest-framework': ['b', 'c', 'a'],
+                'testing': ['c', 'b', 'a'],
+                'deployment': ['b', 'a', 'c'],
+                'best-practices': ['c', 'b', 'a']
+            };
+            
+            if (checkButton) {
+                checkButton.addEventListener('click', function() {
+                    const topic = quiz.getAttribute('data-topic');
+                    const answers = correctAnswers[topic] || [];
+                    let correctCount = 0;
                     
-                    if (selectedOption) {
-                        // Проверка ответов (правильные ответы захардкожены для примера)
-                        const correctAnswers = {
-                            'introduction': ['b', 'c', 'c'],
-                            'installation': ['c', 'b', 'c'],
-                            'project-creation': ['b', 'c', 'b']
-                        };
+                    questions.forEach((question, index) => {
+                        const selectedOption = question.querySelector('input[type="radio"]:checked');
+                        const feedback = question.querySelector('.feedback');
                         
-                        const isCorrect = selectedOption.value === correctAnswers[topicId][index];
-                        
-                        if (isCorrect) {
-                            feedbackDiv.textContent = 'Правильно!';
-                            feedbackDiv.className = 'feedback correct';
-                            correctCount++;
+                        if (selectedOption) {
+                            if (selectedOption.value === answers[index]) {
+                                feedback.textContent = 'Правильно!';
+                                feedback.className = 'feedback correct';
+                                correctCount++;
+                            } else {
+                                feedback.textContent = 'Неправильно. Попробуйте еще раз.';
+                                feedback.className = 'feedback incorrect';
+                            }
                         } else {
-                            feedbackDiv.textContent = 'Неправильно. Попробуйте еще раз.';
-                            feedbackDiv.className = 'feedback incorrect';
+                            feedback.textContent = 'Выберите ответ.';
+                            feedback.className = 'feedback incorrect';
                         }
-                    } else {
-                        feedbackDiv.textContent = 'Пожалуйста, выберите ответ.';
-                        feedbackDiv.className = 'feedback';
+                    });
+                    
+                    // Отображение результатов
+                    if (resultsDiv) {
+                        if (correctCount === questions.length) {
+                            resultsDiv.textContent = `Отлично! Вы ответили правильно на все ${questions.length} вопросов.`;
+                            resultsDiv.className = 'quiz-results success';
+                        } else if (correctCount > 0) {
+                            resultsDiv.textContent = `Вы ответили правильно на ${correctCount} из ${questions.length} вопросов.`;
+                            resultsDiv.className = 'quiz-results partial';
+                        } else {
+                            resultsDiv.textContent = 'Вы не ответили правильно ни на один вопрос. Попробуйте еще раз.';
+                            resultsDiv.className = 'quiz-results fail';
+                        }
                     }
+                    
+                    // Сохранение прогресса в localStorage
+                    saveQuizProgress(topic, correctCount === questions.length);
                 });
-                
-                // Отображение результатов
-                const totalQuestions = questions.length;
-                const percentage = Math.round((correctCount / totalQuestions) * 100);
-                
-                resultsDiv.textContent = `Результат: ${correctCount} из ${totalQuestions} (${percentage}%)`;
-                
-                // Если все ответы правильные, отмечаем тему как завершенную
-                if (correctCount === totalQuestions && !completedTopics.includes(topicId)) {
-                    completedTopics.push(topicId);
-                    localStorage.setItem('completedTopics', JSON.stringify(completedTopics));
-                    updateProgress();
-                }
-            });
+            }
         });
     }
     
-    // Обновление прогресса
-    function updateProgress() {
-        const totalTopics = topics.length;
-        const completedCount = completedTopics.length;
-        const percentage = Math.round((completedCount / totalTopics) * 100);
+    // Сохранение прогресса тестов
+    function saveQuizProgress(topic, completed) {
+        const progress = JSON.parse(localStorage.getItem('quizProgress') || '{}');
+        progress[topic] = completed;
+        localStorage.setItem('quizProgress', JSON.stringify(progress));
+        updateProgress();
+    }
+    
+    // Загрузка прогресса тестов
+    function loadQuizProgress() {
+        return JSON.parse(localStorage.getItem('quizProgress') || '{}');
+    }
+    
+    // Поиск
+    function performSearch(query) {
+        query = query.toLowerCase();
+        const results = [];
         
-        progressIndicator.style.width = `${percentage}%`;
-        progressText.textContent = `${percentage}% завершено`;
+        // Поиск в шаблонах
+        topics.forEach(topic => {
+            const template = document.getElementById(`${topic}-template`);
+            if (template) {
+                const content = template.innerHTML.toLowerCase();
+                if (content.includes(query)) {
+                    const topicName = document.querySelector(`.topics li[data-topic="${topic}"]`).textContent;
+                    results.push({ topic, name: topicName });
+                }
+            }
+        });
+        
+        // Отображение результатов
+        searchResults.innerHTML = '';
+        if (results.length > 0) {
+            results.forEach(result => {
+                const item = document.createElement('div');
+                item.className = 'search-result-item';
+                item.textContent = result.name;
+                item.addEventListener('click', function() {
+                    loadTopic(result.topic);
+                    searchResults.classList.remove('active');
+                });
+                searchResults.appendChild(item);
+            });
+            searchResults.classList.add('active');
+        } else {
+            const item = document.createElement('div');
+            item.className = 'search-result-item';
+            item.textContent = 'Ничего не найдено';
+            searchResults.appendChild(item);
+            searchResults.classList.add('active');
+        }
+    }
+    
+    // Переключение темы
+    function toggleTheme() {
+        document.body.classList.toggle('dark-theme');
+        const isDarkTheme = document.body.classList.contains('dark-theme');
+        themeToggleBtn.textContent = isDarkTheme ? '☀️' : '🌙';
+        localStorage.setItem('darkTheme', isDarkTheme);
+    }
+    
+    // Загрузка сохраненной темы
+    function loadSavedTheme() {
+        const isDarkTheme = localStorage.getItem('darkTheme') === 'true';
+        if (isDarkTheme) {
+            document.body.classList.add('dark-theme');
+            themeToggleBtn.textContent = '☀️';
+        }
     }
     
     // Обработчики событий
     
-    // Клик по теме в меню
+    // Клик по теме в сайдбаре
     topicLinks.forEach(link => {
         link.addEventListener('click', function() {
-            const topicId = this.dataset.topic;
-            loadTopic(topicId);
-            
-            // Закрываем мобильное меню
-            if (window.innerWidth <= 768) {
-                sidebar.classList.remove('active');
-            }
+            const topicName = this.getAttribute('data-topic');
+            loadTopic(topicName);
         });
     });
     
@@ -226,124 +276,45 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Поиск
-    searchInput.addEventListener('input', function() {
-        const query = this.value.toLowerCase();
-        
-        if (query.length < 2) {
-            searchResults.classList.remove('active');
-            return;
-        }
-        
-        // Очистка результатов поиска
-        searchResults.innerHTML = '';
-        
-        // Поиск по темам
-        let resultsFound = false;
-        
-        topicLinks.forEach(link => {
-            const topicText = link.textContent.toLowerCase();
-            
-            if (topicText.includes(query)) {
-                const resultItem = document.createElement('div');
-                resultItem.className = 'search-result-item';
-                resultItem.textContent = link.textContent;
-                resultItem.dataset.topic = link.dataset.topic;
-                
-                resultItem.addEventListener('click', function() {
-                    loadTopic(this.dataset.topic);
-                    searchResults.classList.remove('active');
-                    searchInput.value = '';
-                });
-                
-                searchResults.appendChild(resultItem);
-                resultsFound = true;
-            }
-        });
-        
-        if (resultsFound) {
-            searchResults.classList.add('active');
-        } else {
-            searchResults.classList.remove('active');
+    searchButton.addEventListener('click', function() {
+        const query = searchInput.value.trim();
+        if (query) {
+            performSearch(query);
         }
     });
     
-    searchButton.addEventListener('click', function() {
-        const query = searchInput.value.toLowerCase();
-        
-        if (query.length < 2) {
-            return;
-        }
-        
-        // Поиск первого совпадения и переход к нему
-        for (const link of topicLinks) {
-            const topicText = link.textContent.toLowerCase();
-            
-            if (topicText.includes(query)) {
-                loadTopic(link.dataset.topic);
-                searchResults.classList.remove('active');
-                searchInput.value = '';
-                break;
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            const query = this.value.trim();
+            if (query) {
+                performSearch(query);
             }
         }
     });
     
     // Закрытие результатов поиска при клике вне
     document.addEventListener('click', function(e) {
-        if (!searchResults.contains(e.target) && e.target !== searchInput) {
+        if (!searchResults.contains(e.target) && e.target !== searchInput && e.target !== searchButton) {
             searchResults.classList.remove('active');
         }
     });
     
     // Переключение темы
-    themeToggleBtn.addEventListener('click', function() {
-        const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-        
-        // Обновление иконки
-        this.textContent = newTheme === 'light' ? '🌙' : '☀️';
-    });
+    themeToggleBtn.addEventListener('click', toggleTheme);
     
     // Мобильное меню
     mobileMenuToggle.addEventListener('click', function() {
         sidebar.classList.toggle('active');
     });
     
-    // Закрытие мобильного меню при клике вне
-    document.addEventListener('click', function(e) {
-        if (window.innerWidth <= 768 && !sidebar.contains(e.target) && e.target !== mobileMenuToggle) {
+    // Адаптация при изменении размера окна
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) {
             sidebar.classList.remove('active');
         }
     });
     
-    // Инициализация темы из localStorage
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-        document.documentElement.setAttribute('data-theme', savedTheme);
-        themeToggleBtn.textContent = savedTheme === 'light' ? '🌙' : '☀️';
-    }
-    
-    // Загрузка начальной темы
-    loadTopic(topics[currentTopicIndex]);
-    
-    // Обработка клавиатурных сокращений
-    document.addEventListener('keydown', function(e) {
-        // Alt + стрелка влево - предыдущая тема
-        if (e.altKey && e.key === 'ArrowLeft' && !prevButton.disabled) {
-            prevButton.click();
-        }
-        
-        // Alt + стрелка вправо - следующая тема
-        if (e.altKey && e.key === 'ArrowRight' && !nextButton.disabled) {
-            nextButton.click();
-        }
-        
-        // Ctrl + F - фокус на поиск
-        if (e.ctrlKey && e.key === 'f') {
-            e.preventDefault();
-            searchInput.focus();
-        }
-    });
+    // Инициализация
+    loadSavedTheme();
+    loadTopic(topics[0]);
 });

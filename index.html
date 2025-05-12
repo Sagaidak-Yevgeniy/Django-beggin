@@ -767,7 +767,1662 @@ if settings.DEBUG:
         </div>
     </template>
 
-    <!-- Шаблоны для остальных тем будут добавлены здесь -->
+    <template id="models-template">
+        <h1>Модели и базы данных</h1>
+        <div class="chapter-meta">
+            <span class="reading-time">⏱️ Время чтения: 25 минут</span>
+            <span class="difficulty">🔄 Сложность: Средняя</span>
+        </div>
+        
+        <section>
+            <h2>Что такое модели в Django?</h2>
+            <p>Модель в Django — это класс Python, который описывает структуру данных и поведение объектов в базе данных. Каждая модель соответствует одной таблице в базе данных. Модели определяют поля данных и их типы, а также методы для работы с этими данными.</p>
+            
+            <div class="info-box">
+                <h3>Ключевые особенности моделей Django:</h3>
+                <ul>
+                    <li><strong>ORM (Object-Relational Mapping):</strong> Django предоставляет мощный ORM, который позволяет работать с базой данных, используя объекты Python, а не SQL-запросы.</li>
+                    <li><strong>Миграции:</strong> Django автоматически создает и применяет миграции базы данных на основе изменений в моделях.</li>
+                    <li><strong>Валидация данных:</strong> Модели включают встроенную валидацию данных.</li>
+                    <li><strong>Связи между таблицами:</strong> Django поддерживает все типы связей между таблицами (один-к-одному, один-ко-многим, многие-ко-многим).</li>
+                </ul>
+            </div>
+        </section>
+        
+        <section>
+            <h2>Определение моделей</h2>
+            <p>Модели определяются в файле <code>models.py</code> вашего приложения. Каждая модель наследуется от класса <code>django.db.models.Model</code>.</p>
+            
+            <pre><code class="language-python">from django.db import models
+
+class Author(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)
+    bio = models.TextField(blank=True)
+    date_of_birth = models.DateField(null=True, blank=True)
+    
+    def __str__(self):
+        return self.name
+
+class Book(models.Model):
+    title = models.CharField(max_length=200)
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='books')
+    publication_date = models.DateField()
+    isbn = models.CharField(max_length=13, unique=True)
+    pages = models.IntegerField()
+    price = models.DecimalField(max_digits=6, decimal_places=2)
+    in_stock = models.BooleanField(default=True)
+    
+    def __str__(self):
+        return self.title</code></pre>
+            
+            <div class="info-box">
+                <h3>Объяснение кода:</h3>
+                <ul>
+                    <li>Мы определили две модели: <code>Author</code> и <code>Book</code>.</li>
+                    <li>Каждая модель имеет несколько полей различных типов.</li>
+                    <li>Модель <code>Book</code> имеет поле <code>author</code>, которое является внешним ключом (ForeignKey) к модели <code>Author</code>.</li>
+                    <li>Метод <code>__str__</code> определяет строковое представление объекта модели.</li>
+                </ul>
+            </div>
+        </section>
+        
+        <section>
+            <h2>Типы полей моделей</h2>
+            <p>Django предоставляет множество типов полей для моделей. Вот некоторые из наиболее часто используемых:</p>
+            
+            <div class="comparison-table">
+                <table>
+                    <tr>
+                        <th>Тип поля</th>
+                        <th>Описание</th>
+                        <th>Пример</th>
+                    </tr>
+                    <tr>
+                        <td>CharField</td>
+                        <td>Строка фиксированной длины</td>
+                        <td><code>title = models.CharField(max_length=100)</code></td>
+                    </tr>
+                    <tr>
+                        <td>TextField</td>
+                        <td>Длинный текст</td>
+                        <td><code>description = models.TextField()</code></td>
+                    </tr>
+                    <tr>
+                        <td>IntegerField</td>
+                        <td>Целое число</td>
+                        <td><code>age = models.IntegerField()</code></td>
+                    </tr>
+                    <tr>
+                        <td>FloatField</td>
+                        <td>Число с плавающей точкой</td>
+                        <td><code>height = models.FloatField()</code></td>
+                    </tr>
+                    <tr>
+                        <td>DecimalField</td>
+                        <td>Десятичное число фиксированной точности</td>
+                        <td><code>price = models.DecimalField(max_digits=6, decimal_places=2)</code></td>
+                    </tr>
+                    <tr>
+                        <td>BooleanField</td>
+                        <td>Логическое значение (True/False)</td>
+                        <td><code>is_active = models.BooleanField(default=True)</code></td>
+                    </tr>
+                    <tr>
+                        <td>DateField</td>
+                        <td>Дата</td>
+                        <td><code>birth_date = models.DateField()</code></td>
+                    </tr>
+                    <tr>
+                        <td>DateTimeField</td>
+                        <td>Дата и время</td>
+                        <td><code>created_at = models.DateTimeField(auto_now_add=True)</code></td>
+                    </tr>
+                    <tr>
+                        <td>EmailField</td>
+                        <td>Адрес электронной почты</td>
+                        <td><code>email = models.EmailField()</code></td>
+                    </tr>
+                    <tr>
+                        <td>FileField</td>
+                        <td>Файл</td>
+                        <td><code>document = models.FileField(upload_to='documents/')</code></td>
+                    </tr>
+                    <tr>
+                        <td>ImageField</td>
+                        <td>Изображение</td>
+                        <td><code>photo = models.ImageField(upload_to='photos/')</code></td>
+                    </tr>
+                    <tr>
+                        <td>URLField</td>
+                        <td>URL</td>
+                        <td><code>website = models.URLField()</code></td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+        
+        <section>
+            <h2>Параметры полей</h2>
+            <p>Поля моделей могут принимать различные параметры, которые определяют их поведение:</p>
+            
+            <div class="comparison-table">
+                <table>
+                    <tr>
+                        <th>Параметр</th>
+                        <th>Описание</th>
+                        <th>Пример</th>
+                    </tr>
+                    <tr>
+                        <td>null</td>
+                        <td>Если True, Django будет хранить пустые значения как NULL в базе данных</td>
+                        <td><code>age = models.IntegerField(null=True)</code></td>
+                    </tr>
+                    <tr>
+                        <td>blank</td>
+                        <td>Если True, поле может быть пустым в формах</td>
+                        <td><code>bio = models.TextField(blank=True)</code></td>
+                    </tr>
+                    <tr>
+                        <td>default</td>
+                        <td>Значение по умолчанию для поля</td>
+                        <td><code>is_active = models.BooleanField(default=True)</code></td>
+                    </tr>
+                    <tr>
+                        <td>unique</td>
+                        <td>Если True, поле должно быть уникальным во всей таблице</td>
+                        <td><code>email = models.EmailField(unique=True)</code></td>
+                    </tr>
+                    <tr>
+                        <td>choices</td>
+                        <td>Список доступных вариантов для поля</td>
+                        <td><code>STATUS_CHOICES = [('D', 'Draft'), ('P', 'Published')]<br>status = models.CharField(max_length=1, choices=STATUS_CHOICES)</code></td>
+                    </tr>
+                    <tr>
+                        <td>help_text</td>
+                        <td>Текст справки для поля в формах</td>
+                        <td><code>title = models.CharField(max_length=100, help_text='Enter the title of the book')</code></td>
+                    </tr>
+                    <tr>
+                        <td>verbose_name</td>
+                        <td>Человекочитаемое имя поля</td>
+                        <td><code>pub_date = models.DateField(verbose_name='Publication date')</code></td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="warning-box">
+                <h3>Важно!</h3>
+                <p>Параметры <code>null</code> и <code>blank</code> имеют разное назначение:</p>
+                <ul>
+                    <li><code>null</code> определяет, как поле будет храниться в базе данных.</li>
+                    <li><code>blank</code> определяет, может ли поле б��ть пустым в формах.</li>
+                </ul>
+                <p>Для строковых полей (CharField, TextField) рекомендуется использовать <code>blank=True</code> вместо <code>null=True</code>, так как Django будет хранить пустые строки как пустые строки, а не как NULL.</p>
+            </div>
+        </section>
+        
+        <section>
+            <h2>Связи между моделями</h2>
+            <p>Django поддерживает три типа связей между моделями:</p>
+            
+            <h3>1. Один-к-одному (OneToOneField)</h3>
+            <p>Используется, когда каждая запись в одной таблице соответствует ровно одной записи в другой таблице.</p>
+            
+            <pre><code class="language-python">from django.contrib.auth.models import User
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    bio = models.TextField(blank=True)
+    birth_date = models.DateField(null=True, blank=True)
+    
+    def __str__(self):
+        return f'Profile for {self.user.username}'</code></pre>
+            
+            <h3>2. Один-ко-многим (ForeignKey)</h3>
+            <p>Используется, когда каждая запись в одной таблице может быть связана с несколькими записями в другой таблице.</p>
+            
+            <pre><code class="language-python">class Category(models.Model):
+    name = models.CharField(max_length=100)
+    
+    def __str__(self):
+        return self.name
+
+class Product(models.Model):
+    name = models.CharField(max_length=100)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    
+    def __str__(self):
+        return self.name</code></pre>
+            
+            <h3>3. Многие-ко-многим (ManyToManyField)</h3>
+            <p>Используется, когда каждая запись в одной таблице может быть связана с несколькими записями в другой таблице, и наоборот.</p>
+            
+            <pre><code class="language-python">class Tag(models.Model):
+    name = models.CharField(max_length=50)
+    
+    def __str__(self):
+        return self.name
+
+class Article(models.Model):
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    tags = models.ManyToManyField(Tag, related_name='articles')
+    
+    def __str__(self):
+        return self.title</code></pre>
+            
+            <div class="info-box">
+                <h3>Параметр on_delete</h3>
+                <p>Параметр <code>on_delete</code> определяет, что происходит с связанными объектами, когда объект, на который они ссылаются, удаляется:</p>
+                <ul>
+                    <li><code>models.CASCADE</code>: Удаляет связанные объекты при удалении объекта, на который они ссылаются.</li>
+                    <li><code>models.PROTECT</code>: Предотвращает удаление объекта, если на него есть ссылки.</li>
+                    <li><code>models.SET_NULL</code>: Устанавливает NULL для связанных объектов (требует <code>null=True</code>).</li>
+                    <li><code>models.SET_DEFAULT</code>: Устанавливает значение по умолчанию для связанных объектов (требует <code>default</code>).</li>
+                    <li><code>models.SET()</code>: Устанавливает заданное значение для связанных объектов.</li>
+                    <li><code>models.DO_NOTHING</code>: Ничего не делает (может привести к ошибкам целостности базы данных).</li>
+                </ul>
+            </div>
+        </section>
+        
+        <section>
+            <h2>Мета-опции моделей</h2>
+            <p>Класс <code>Meta</code> внутри модели позволяет задать различные мета-опции для модели:</p>
+            
+            <pre><code class="language-python">class Book(models.Model):
+    title = models.CharField(max_length=200)
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    publication_date = models.DateField()
+    
+    class Meta:
+        verbose_name = 'Книга'
+        verbose_name_plural = 'Книги'
+        ordering = ['-publication_date']
+        unique_together = ['title', 'author']
+        indexes = [
+            models.Index(fields=['title']),
+            models.Index(fields=['publication_date']),
+        ]
+        
+    def __str__(self):
+        return self.title</code></pre>
+            
+            <div class="info-box">
+                <h3>Часто используемые мета-опции:</h3>
+                <ul>
+                    <li><code>verbose_name</code>: Человекочитаемое имя модели в единственном числе.</li>
+                    <li><code>verbose_name_plural</code>: Человекочитаемое имя модели во множественном числе.</li>
+                    <li><code>ordering</code>: Список полей для сортировки объектов по умолчанию.</li>
+                    <li><code>unique_together</code>: Список наборов полей, которые должны быть уникальными вместе.</li>
+                    <li><code>indexes</code>: Список индексов для создания в базе данных.</li>
+                    <li><code>db_table</code>: Имя таблицы в базе данных.</li>
+                    <li><code>abstract</code>: Если True, модель будет абстрактной (не будет создаваться таблица).</li>
+                    <li><code>permissions</code>: Дополнительные разрешения для модели.</li>
+                </ul>
+            </div>
+        </section>
+        
+        <section>
+            <h2>Создание и применение миграций</h2>
+            <p>После определения моделей необходимо создать и применить миграции, чтобы создать соответствующие таблицы в базе данных:</p>
+            
+            <pre><code class="language-bash"># Создание миграций
+python manage.py makemigrations
+
+# Применение миграций
+python manage.py migrate</code></pre>
+            
+            <p>Вы также можете создать миграции для конкретного приложения:</p>
+            
+            <pre><code class="language-bash">python manage.py makemigrations myapp</code></pre>
+            
+            <p>И применить миграции для конкретного приложения:</p>
+            
+            <pre><code class="language-bash">python manage.py migrate myapp</code></pre>
+            
+            <div class="info-box">
+                <h3>Полезные команды для работы с миграциями:</h3>
+                <ul>
+                    <li><code>python manage.py showmigrations</code>: Показывает список всех миграций и их статус.</li>
+                    <li><code>python manage.py sqlmigrate myapp 0001</code>: Показывает SQL-запросы, которые будут выполнены для миграции.</li>
+                    <li><code>python manage.py migrate myapp 0001</code>: Применяет миграцию до указанной версии.</li>
+                </ul>
+            </div>
+        </section>
+        
+        <section>
+            <h2>Работа с объектами моделей</h2>
+            <p>Django ORM предоставляет удобный API для работы с объектами моделей. Вот основные операции:</p>
+            
+            <h3>Создание объектов</h3>
+            <pre><code class="language-python"># Способ 1
+author = Author(name='Лев Толстой', email='tolstoy@example.com')
+author.save()
+
+# Способ 2
+author = Author.objects.create(name='Федор Достоевский', email='dostoevsky@example.com')</code></pre>
+            
+            <h3>Получение объектов</h3>
+            <pre><code class="language-python"># Получение всех объектов
+all_authors = Author.objects.all()
+
+# Получение объекта по первичному ключу
+author = Author.objects.get(pk=1)
+
+# Получение объекта по условию
+author = Author.objects.get(name='Лев Толстой')
+
+# Фильтрация объектов
+russian_authors = Author.objects.filter(country='Russia')
+modern_books = Book.objects.filter(publication_date__gte='2000-01-01')
+
+# Исключение объектов
+non_fiction_books = Book.objects.exclude(genre='Fiction')</code></pre>
+            
+            <h3>Обновление объектов</h3>
+            <pre><code class="language-python"># Способ 1
+author = Author.objects.get(pk=1)
+author.name = 'Лев Николаевич Толстой'
+author.save()
+
+# Способ 2
+Author.objects.filter(pk=1).update(name='Лев Николаевич Толстой')</code></pre>
+            
+            <h3>Удаление объектов</h3>
+            <pre><code class="language-python"># Способ 1
+author = Author.objects.get(pk=1)
+author.delete()
+
+# Способ 2
+Author.objects.filter(pk=1).delete()
+
+# Удаление всех объектов
+Author.objects.all().delete()</code></pre>
+        </section>
+        
+        <section>
+            <h2>Сложные запросы</h2>
+            <p>Django ORM позволяет выполнять сложные запросы к базе данных:</p>
+            
+            <h3>Связанные объекты</h3>
+            <pre><code class="language-python"># Получение всех книг автора
+books = author.books.all()  # Используя related_name
+
+# Получение автора книги
+author = book.author
+
+# Фильтрация по связанным объектам
+books = Book.objects.filter(author__name='Лев Толстой')
+authors = Author.objects.filter(books__title__contains='Война')</code></pre>
+            
+            <h3>Агрегация и аннотация</h3>
+            <pre><code class="language-python">from django.db.models import Count, Avg, Sum, Min, Max
+
+# Подсчет количества книг каждого автора
+authors = Author.objects.annotate(book_count=Count('books'))
+
+# Получение автора с наибольшим количеством книг
+author = Author.objects.annotate(book_count=Count('books')).order_by('-book_count').first()
+
+# Вычисление средней цены книг
+avg_price = Book.objects.aggregate(avg_price=Avg('price'))
+
+# Вычисление общей стоимости всех книг
+total_price = Book.objects.aggregate(total_price=Sum('price'))</code></pre>
+            
+            <h3>Q-объекты для сложных условий</h3>
+            <pre><code class="language-python">from django.db.models import Q
+
+# Книги, опубликованные после 2000 года ИЛИ с ценой выше 500
+books = Book.objects.filter(Q(publication_date__gte='2000-01-01') | Q(price__gt=500))
+
+# Книги, опубликованные после 2000 года И с ценой выше 500
+books = Book.objects.filter(Q(publication_date__gte='2000-01-01') & Q(price__gt=500))
+
+# Книги, опубликованные после 2000 года И НЕ с ценой выше 500
+books = Book.objects.filter(Q(publication_date__gte='2000-01-01') & ~Q(price__gt=500))</code></pre>
+        </section>
+        
+        <section>
+            <h2>Оптимизация запросов</h2>
+            <p>При работе с большими объемами данных важно оптимизировать запросы к базе данных:</p>
+            
+            <h3>select_related и prefetch_related</h3>
+            <pre><code class="language-python"># Без оптимизации - будет выполнено N+1 запросов
+books = Book.objects.all()
+for book in books:
+    print(book.author.name)  # Дополнительный запрос для каждой книги
+
+# С оптимизацией - будет выполнено 1 запрос
+books = Book.objects.select_related('author').all()
+for book in books:
+    print(book.author.name)  # Данные уже загружены
+
+# Для связей "многие-ко-многим" или "один-ко-многим" в обратном направлении
+articles = Article.objects.prefetch_related('tags').all()
+for article in articles:
+    print([tag.name for tag in article.tags.all()])  # Данные уже загружены</code></pre>
+            
+            <h3>Отложенная загрузка</h3>
+            <pre><code class="language-python"># Загрузка только необходимых полей
+authors = Author.objects.only('name', 'email')
+
+# Исключение ненужных полей
+authors = Author.objects.defer('bio', 'date_of_birth')</code></pre>
+            
+            <h3>Индексы</h3>
+            <p>Для часто используемых полей в запросах рекомендуется создавать индексы:</p>
+            
+            <pre><code class="language-python">class Book(models.Model):
+    title = models.CharField(max_length=200, db_index=True)  # Индекс на уровне поля
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['publication_date']),
+            models.Index(fields=['author', 'genre']),  # Составной индекс
+        ]</code></pre>
+        </section>
+        
+        <div class="quiz-container">
+            <h2>Проверьте свои знания</h2>
+            <div class="quiz" data-topic="models">
+                <div class="question">
+                    <p>1. Какой тип связи следует использовать, если каждый автор может написать несколько книг?</p>
+                    <div class="options">
+                        <label><input type="radio" name="q1" value="a"> OneToOneField</label>
+                        <label><input type="radio" name="q1" value="b"> ForeignKey</label>
+                        <label><input type="radio" name="q1" value="c"> ManyToManyField</label>
+                        <label><input type="radio" name="q1" value="d"> GenericForeignKey</label>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+                
+                <div class="question">
+                    <p>2. Какой метод используется для сохранения изменений в объекте модели?</p>
+                    <div class="options">
+                        <label><input type="radio" name="q2" value="a"> update()</label>
+                        <label><input type="radio" name="q2" value="b"> save()</label>
+                        <label><input type="radio" name="q2" value="c"> commit()</label>
+                        <label><input type="radio" name="q2" value="d"> store()</label>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+                
+                <div class="question">
+                    <p>3. Какой метод следует использовать для оптимизации запросов с связями "один-ко-многим"?</p>
+                    <div class="options">
+                        <label><input type="radio" name="q3" value="a"> select_related()</label>
+                        <label><input type="radio" name="q3" value="b"> prefetch_related()</label>
+                        <label><input type="radio" name="q3" value="c"> only()</label>
+                        <label><input type="radio" name="q3" value="d"> defer()</label>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+                
+                <button class="check-answers">Проверить ответы</button>
+                <div class="quiz-results"></div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Добавляем шаблон для темы "Представления (Views)" -->
+    <template id="views-template">
+        <h1>Представления (Views)</h1>
+        <div class="chapter-meta">
+            <span class="reading-time">⏱️ Время чтения: 25 минут</span>
+            <span class="difficulty">🔄 Сложность: Средняя</span>
+        </div>
+        
+        <section>
+            <h2>Что такое представления в Django?</h2>
+            <p>Представление (View) в Django — это функция или класс Python, который принимает веб-запрос и возвращает веб-ответ. Представления содержат логику, которая обрабатывает запрос и формирует ответ. Ответ может быть HTML-страницей, перенаправлением, ошибкой 404, документом JSON, изображением или чем-то еще.</p>
+            
+            <div class="info-box">
+                <h3>Ключевые особенности представлений Django:</h3>
+                <ul>
+                    <li><strong>Обработка запросов:</strong> Представления получают и обрабатывают HTTP-запросы.</li>
+                    <li><strong>Взаимодействие с моделями:</strong> Представления могут запрашивать данные из моделей и передавать их в шаблоны.</li>
+                    <li><strong>Формирование ответов:</strong> Представления формируют HTTP-ответы, которые могут содержать HTML, JSON, XML и другие форматы.</li>
+                    <li><strong>Гибкость:</strong> Django поддерживает как функциональные, так и классовые представления.</li>
+                </ul>
+            </div>
+        </section>
+        
+        <section>
+            <h2>Функциональные представления</h2>
+            <p>Функциональные представления — это функции Python, которые принимают объект запроса (request) и возвращают объект ответа (response). Это самый простой способ создания представлений в Django.</p>
+            
+            <pre><code class="language-python">from django.http import HttpResponse
+from django.shortcuts import render
+
+# Простое представление, возвращающее HttpResponse
+def hello_world(request):
+    return HttpResponse("Hello, World!")
+
+# Представление, использующее шаблон
+def home(request):
+    context = {
+        'title': 'Главная страница',
+        'message': 'Добро пожаловать на наш сайт!'
+    }
+    return render(request, 'home.html', context)</code></pre>
+            
+            <div class="info-box">
+                <h3>Объяснение кода:</h3>
+                <ul>
+                    <li>Функция <code>hello_world</code> принимает объект запроса и возвращает простой текстовый ответ.</li>
+                    <li>Функция <code>home</code> также принимает объект запроса, но возвращает HTML-страницу, созданную с использованием шаблона.</li>
+                    <li>Функция <code>render</code> принимает объект запроса, имя шаблона и словарь контекста, и возвращает объект <code>HttpResponse</code> с отрендеренным шаблоном.</li>
+                </ul>
+            </div>
+        </section>
+        
+        <section>
+            <h2>Объект запроса (HttpRequest)</h2>
+            <p>Объект запроса <code>HttpRequest</code> содержит информацию о текущем HTTP-запросе. Он создается Django автоматически и передается в представление в качестве первого аргумента.</p>
+            
+            <div class="comparison-table">
+                <table>
+                    <tr>
+                        <th>Атрибут/Метод</th>
+                        <th>Описание</th>
+                        <th>Пример</th>
+                    </tr>
+                    <tr>
+                        <td>request.method</td>
+                        <td>HTTP-метод запроса (GET, POST, etc.)</td>
+                        <td><code>if request.method == 'POST':</code></td>
+                    </tr>
+                    <tr>
+                        <td>request.GET</td>
+                        <td>Словарь параметров GET-запроса</td>
+                        <td><code>query = request.GET.get('q', '')</code></td>
+                    </tr>
+                    <tr>
+                        <td>request.POST</td>
+                        <td>Словарь параметров POST-запроса</td>
+                        <td><code>name = request.POST.get('name', '')</code></td>
+                    </tr>
+                    <tr>
+                        <td>request.FILES</td>
+                        <td>Словарь загруженных файлов</td>
+                        <td><code>file = request.FILES.get('file')</code></td>
+                    </tr>
+                    <tr>
+                        <td>request.COOKIES</td>
+                        <td>Словарь cookies</td>
+                        <td><code>user_id = request.COOKIES.get('user_id')</code></td>
+                    </tr>
+                    <tr>
+                        <td>request.session</td>
+                        <td>Словарь сессии</td>
+                        <td><code>request.session['user_id'] = 123</code></td>
+                    </tr>
+                    <tr>
+                        <td>request.user</td>
+                        <td>Объект текущего пользователя</td>
+                        <td><code>if request.user.is_authenticated:</code></td>
+                    </tr>
+                    <tr>
+                        <td>request.path</td>
+                        <td>Полный путь запроса</td>
+                        <td><code>current_path = request.path</code></td>
+                    </tr>
+                    <tr>
+                        <td>request.META</td>
+                        <td>Словарь HTTP-заголовков</td>
+                        <td><code>user_agent = request.META.get('HTTP_USER_AGENT')</code></td>
+                    </tr>
+                </table>
+            </div>
+            
+            <pre><code class="language-python">def process_request(request):
+    # Проверка метода запроса
+    if request.method == 'POST':
+        # Получение данных из POST-запроса
+        name = request.POST.get('name', '')
+        email = request.POST.get('email', '')
+        
+        # Обработка загруженного файла
+        if 'document' in request.FILES:
+            document = request.FILES['document']
+            # Сохранение файла
+            
+        # Сохранение данных в сессии
+        request.session['name'] = name
+        
+        # Перенаправление после успешной обработки
+        return redirect('success')
+    else:
+        # Получение данных из GET-запроса
+        query = request.GET.get('q', '')
+        
+        # Получение данных из сессии
+        name = request.session.get('name', '')
+        
+        # Проверка аутентификации пользователя
+        if request.user.is_authenticated:
+            # Действия для аутентифицированного пользователя
+            pass
+        
+        # Рендеринг шаблона с контекстом
+        return render(request, 'form.html', {'query': query, 'name': name})</code></pre>
+        </section>
+        
+        <section>
+            <h2>Объект ответа (HttpResponse)</h2>
+            <p>Объект ответа <code>HttpResponse</code> представляет HTTP-ответ, который будет отправлен пользователю. Django предоставляет несколько классов для создания различных типов ответов.</p>
+            
+            <div class="comparison-table">
+                <table>
+                    <tr>
+                        <th>Класс</th>
+                        <th>Описание</th>
+                        <th>Пример</th>
+                    </tr>
+                    <tr>
+                        <td>HttpResponse</td>
+                        <td>Базовый класс для HTTP-ответов</td>
+                        <td><code>return HttpResponse("Hello, World!")</code></td>
+                    </tr>
+                    <tr>
+                        <td>JsonResponse</td>
+                        <td>Ответ в формате JSON</td>
+                        <td><code>return JsonResponse({'name': 'John'})</code></td>
+                    </tr>
+                    <tr>
+                        <td>HttpResponseRedirect</td>
+                        <td>Перенаправление (статус 302)</td>
+                        <td><code>return HttpResponseRedirect('/success/')</code></td>
+                    </tr>
+                    <tr>
+                        <td>HttpResponsePermanentRedirect</td>
+                        <td>Постоянное перенаправление (статус 301)</td>
+                        <td><code>return HttpResponsePermanentRedirect('/new-url/')</code></td>
+                    </tr>
+                    <tr>
+                        <td>HttpResponseNotFound</td>
+                        <td>Ответ "не найдено" (статус 404)</td>
+                        <td><code>return HttpResponseNotFound("Страница не найдена")</code></td>
+                    </tr>
+                    <tr>
+                        <td>HttpResponseForbidden</td>
+                        <td>Ответ "доступ запрещен" (статус 403)</td>
+                        <td><code>return HttpResponseForbidden("Доступ запрещен")</code></td>
+                    </tr>
+                    <tr>
+                        <td>HttpResponseBadRequest</td>
+                        <td>Ответ "неверный запрос" (статус 400)</td>
+                        <td><code>return HttpResponseBadRequest("Неверный запрос")</code></td>
+                    </tr>
+                    <tr>
+                        <td>HttpResponseServerError</td>
+                        <td>Ответ "ошибка сервера" (статус 500)</td>
+                        <td><code>return HttpResponseServerError("Ошибка сервера")</code></td>
+                    </tr>
+                </table>
+            </div>
+            
+            <pre><code class="language-python">from django.http import HttpResponse, JsonResponse, HttpResponseRedirect, HttpResponseNotFound
+from django.shortcuts import redirect, render
+
+def text_response(request):
+    # Простой текстовый ответ
+    return HttpResponse("Hello, World!")
+
+def html_response(request):
+    # HTML-ответ
+    html = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Пример</title>
+    </head>
+    <body>
+        <h1>Привет, мир!</h1>
+    </body>
+    </html>
+    """
+    return HttpResponse(html)
+
+def json_response(request):
+    # JSON-ответ
+    data = {
+        'name': 'John',
+        'age': 30,
+        'city': 'New York'
+    }
+    return JsonResponse(data)
+
+def redirect_response(request):
+    # Перенаправление
+    return redirect('home')  # Используя имя URL-шаблона
+    # или
+    return HttpResponseRedirect('/home/')  # Используя путь
+
+def not_found_response(request):
+    # Ответ "не найдено"
+    return HttpResponseNotFound("Страница не найдена")
+
+def file_response(request):
+    # Ответ с файлом
+    with open('example.txt', 'rb') as f:
+        response = HttpResponse(f.read(), content_type='text/plain')
+        response['Content-Disposition'] = 'attachment; filename="example.txt"'
+        return response</code></pre>
+        </section>
+        
+        <section>
+            <h2>Сокращения для представлений</h2>
+            <p>Django предоставляет несколько функций-сокращений, которые упрощают создание распространенных типов представлений:</p>
+            
+            <pre><code class="language-python">from django.shortcuts import render, redirect, get_object_or_404
+from .models import Article
+
+def article_detail(request, article_id):
+    # Получение объекта или возврат 404
+    article = get_object_or_404(Article, pk=article_id)
+    return render(request, 'article_detail.html', {'article': article})
+
+def article_list(request):
+    # Получение всех статей
+    articles = Article.objects.all()
+    return render(request, 'article_list.html', {'articles': articles})
+
+def article_create(request):
+    if request.method == 'POST':
+        # Обработка формы
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        
+        # Создание новой статьи
+        article = Article.objects.create(title=title, content=content)
+        
+        # Перенаправление на страницу статьи
+        return redirect('article_detail', article_id=article.id)
+    else:
+        # Отображение формы
+        return render(request, 'article_form.html')</code></pre>
+            
+            <div class="info-box">
+                <h3>Полезные функции-сокращения:</h3>
+                <ul>
+                    <li><code>render(request, template_name, context=None)</code>: Рендерит шаблон с заданным контекстом и возвращает HttpResponse.</li>
+                    <li><code>redirect(to, *args, **kwargs)</code>: Возвращает HttpResponseRedirect для заданного URL или имени URL-шаблона.</li>
+                    <li><code>get_object_or_404(klass, *args, **kwargs)</code>: Возвращает объект модели или вызывает Http404, если объект не существует.</li>
+                    <li><code>get_list_or_404(klass, *args, **kwargs)</code>: Возвращает список объектов модели или вызывает Http404, если список пуст.</li>
+                </ul>
+            </div>
+        </section>
+        
+        <section>
+            <h2>Классовые представления</h2>
+            <p>Классовые представления (Class-Based Views, CBV) предоставляют альтернативный способ организации представлений. Они позволяют использовать наследование и миксины для повторного использования кода.</p>
+            
+            <pre><code class="language-python">from django.views import View
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.http import HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Article
+from .forms import ArticleForm
+
+# Базовое классовое представление
+class HelloWorldView(View):
+    def get(self, request):
+        return HttpResponse("Hello, World!")
+
+# Представление для списка статей
+class ArticleListView(ListView):
+    model = Article
+    template_name = 'article_list.html'
+    context_object_name = 'articles'
+    paginate_by = 10
+    
+    def get_queryset(self):
+        # Можно переопределить метод для настройки запроса
+        return Article.objects.filter(published=True).order_by('-created_at')
+
+# Представление для детальной информации о статье
+class ArticleDetailView(DetailView):
+    model = Article
+    template_name = 'article_detail.html'
+    context_object_name = 'article'
+
+# Представление для создания статьи
+class ArticleCreateView(CreateView):
+    model = Article
+    form_class = ArticleForm
+    template_name = 'article_form.html'
+    success_url = '/articles/'
+    
+    def form_valid(self, form):
+        # Можно выполнить дополнительные действия перед сохранением
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+# Представление для редактирования статьи
+class ArticleUpdateView(UpdateView):
+    model = Article
+    form_class = ArticleForm
+    template_name = 'article_form.html'
+    success_url = '/articles/'
+
+# Представление для удаления статьи
+class ArticleDeleteView(DeleteView):
+    model = Article
+    template_name = 'article_confirm_delete.html'
+    success_url = '/articles/'</code></pre>
+            
+            <p>Для использования классовых представлений в URL-шаблонах необходимо использовать метод <code>as_view()</code>:</p>
+            
+            <pre><code class="language-python">from django.urls import path
+from .views import (
+    HelloWorldView, ArticleListView, ArticleDetailView,
+    ArticleCreateView, ArticleUpdateView, ArticleDeleteView
+)
+
+urlpatterns = [
+    path('hello/', HelloWorldView.as_view(), name='hello'),
+    path('articles/', ArticleListView.as_view(), name='article_list'),
+    path('articles/<int:pk>/', ArticleDetailView.as_view(), name='article_detail'),
+    path('articles/create/', ArticleCreateView.as_view(), name='article_create'),
+    path('articles/<int:pk>/edit/', ArticleUpdateView.as_view(), name='article_update'),
+    path('articles/<int:pk>/delete/', ArticleDeleteView.as_view(), name='article_delete'),
+]</code></pre>
+        </section>
+        
+        <section>
+            <h2>Миксины для классовых представлений</h2>
+            <p>Миксины (Mixins) — это классы, которые предоставляют определенную функциональность и могут быть использованы с классовыми представлениями для расширения их возможностей.</p>
+            
+            <pre><code class="language-python">from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.views.generic import ListView, DetailView, CreateView
+
+# Миксин для требования аутентификации
+class AuthorRequiredMixin:
+    """Миксин, который проверяет, является ли текущий пользователь автором объекта."""
+    def dispatch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj.author != request.user:
+            return self.handle_no_permission()
+        return super().dispatch(request, *args, **kwargs)
+
+# Использование встроенных миксинов
+class ArticleListView(LoginRequiredMixin, ListView):
+    model = Article
+    template_name = 'article_list.html'
+    login_url = '/login/'  # URL для перенаправления, если пользователь не аутентифицирован
+
+# Использование нескольких миксинов
+class ArticleUpdateView(LoginRequiredMixin, AuthorRequiredMixin, UpdateView):
+    model = Article
+    form_class = ArticleForm
+    template_name = 'article_form.html'
+    success_url = '/articles/'
+
+# Миксин для требования определенных разрешений
+class ArticleDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    model = Article
+    template_name = 'article_confirm_delete.html'
+    success_url = '/articles/'
+    permission_required = 'blog.delete_article'  # Требуемое разрешение</code></pre>
+            
+            <div class="info-box">
+                <h3>Встроенные миксины Django:</h3>
+                <ul>
+                    <li><code>LoginRequiredMixin</code>: Требует аутентификации пользователя.</li>
+                    <li><code>PermissionRequiredMixin</code>: Требует определенных разрешений.</li>
+                    <li><code>UserPassesTestMixin</code>: Требует, чтобы пользователь прошел определенный тест.</li>
+                    <li><code>FormMixin</code>: Добавляет функциональность обработки форм.</li>
+                    <li><code>ContextMixin</code>: Позволяет добавлять дополнительный контекст.</li>
+                    <li><code>SingleObjectMixin</code>: Предоставляет методы для работы с одним объектом.</li>
+                    <li><code>MultipleObjectMixin</code>: Предоставляет методы для работы с несколькими объектами.</li>
+                </ul>
+            </div>
+        </section>
+        
+        <section>
+            <h2>Декораторы представлений</h2>
+            <p>Декораторы представлений позволяют добавлять функциональность к функциональным представлениям. Django предоставляет несколько встроенных декораторов:</p>
+            
+            <pre><code class="language-python">from django.contrib.auth.decorators import login_required, permission_required
+from django.views.decorators.http import require_http_methods, require_GET, require_POST
+from django.views.decorators.cache import cache_page
+from django.shortcuts import render, redirect
+from .models import Article
+
+# Декоратор, требующий аутентификации
+@login_required(login_url='/login/')
+def profile(request):
+    return render(request, 'profile.html')
+
+# Декоратор, требующий определенных разрешений
+@permission_required('blog.add_article', raise_exception=True)
+def article_create(request):
+    # ...
+    return render(request, 'article_form.html')
+
+# Декоратор, ограничивающий HTTP-методы
+@require_http_methods(["GET", "POST"])
+def article_edit(request, article_id):
+    article = get_object_or_404(Article, pk=article_id)
+    if request.method == 'POST':
+        # Обработка формы
+        return redirect('article_detail', article_id=article.id)
+    else:
+        # Отображение формы
+        return render(request, 'article_form.html', {'article': article})
+
+# Декоратор, ограничивающий только GET-запросы
+@require_GET
+def article_list(request):
+    articles = Article.objects.all()
+    return render(request, 'article_list.html', {'articles': articles})
+
+# Декоратор, ограничивающий только POST-запросы
+@require_POST
+def article_delete(request, article_id):
+    article = get_object_or_404(Article, pk=article_id)
+    article.delete()
+    return redirect('article_list')
+
+# Декоратор кэширования
+@cache_page(60 * 15)  # Кэширование на 15 минут
+def article_detail(request, article_id):
+    article = get_object_or_404(Article, pk=article_id)
+    return render(request, 'article_detail.html', {'article': article})</code></pre>
+            
+            <div class="info-box">
+                <h3>Создание собственных декораторов:</h3>
+                <p>Вы также можете создавать собственные декораторы для представлений:</p>
+                <pre><code class="language-python">from functools import wraps
+from django.http import HttpResponseForbidden
+
+def author_required(view_func):
+    @wraps(view_func)
+    def wrapper(request, article_id, *args, **kwargs):
+        article = get_object_or_404(Article, pk=article_id)
+        if article.author != request.user:
+            return HttpResponseForbidden("Вы не являетесь автором этой статьи")
+        return view_func(request, article_id, *args, **kwargs)
+    return wrapper
+
+@login_required
+@author_required
+def article_edit(request, article_id):
+    # ...
+    return render(request, 'article_form.html')</code></pre>
+            </div>
+        </section>
+        
+        <section>
+            <h2>Обработка форм в представлениях</h2>
+            <p>Формы часто используются для получения данных от пользователя. Django предоставляет удобный API для обработки форм в представлениях:</p>
+            
+            <pre><code class="language-python">from django.shortcuts import render, redirect
+from .forms import ArticleForm
+from .models import Article
+
+# Функциональное представление для обработки формы
+def article_create(request):
+    if request.method == 'POST':
+        form = ArticleForm(request.POST, request.FILES)
+        if form.is_valid():
+            article = form.save(commit=False)
+            article.author = request.user
+            article.save()
+            return redirect('article_detail', article_id=article.id)
+    else:
+        form = ArticleForm()
+    
+    return render(request, 'article_form.html', {'form': form})
+
+# Функциональное представление для редактирования
+def article_edit(request, article_id):
+    article = get_object_or_404(Article, pk=article_id)
+    
+    if request.method == 'POST':
+        form = ArticleForm(request.POST, request.FILES, instance=article)
+        if form.is_valid():
+            form.save()
+            return redirect('article_detail', article_id=article.id)
+    else:
+        form = ArticleForm(instance=article)
+    
+    return render(request, 'article_form.html', {'form': form, 'article': article})</code></pre>
+            
+            <p>Классовые представления также предоставляют удобные способы обработки форм:</p>
+            
+            <pre><code class="language-python">from django.views.generic.edit import FormView
+from .forms import ContactForm
+
+class ContactFormView(FormView):
+    template_name = 'contact_form.html'
+    form_class = ContactForm
+    success_url = '/thanks/'
+    
+    def form_valid(self, form):
+        # Этот метод вызывается, когда форма валидна
+        # Здесь можно выполнить дополнительные действия, например, отправить email
+        form.send_email()
+        return super().form_valid(form)</code></pre>
+        </section>
+        
+        <section>
+            <h2>Обработка ошибок</h2>
+            <p>Django позволяет определить представления для обработки распространенных ошибок HTTP:</p>
+            
+            <pre><code class="language-python"># В файле urls.py проекта
+handler404 = 'myapp.views.page_not_found'
+handler500 = 'myapp.views.server_error'
+handler403 = 'myapp.views.permission_denied'
+handler400 = 'myapp.views.bad_request'
+
+# В файле views.py приложения
+def page_not_found(request, exception):
+    return render(request, '404.html', status=404)
+
+def server_error(request):
+    return render(request, '500.html', status=500)
+
+def permission_denied(request, exception):
+    return render(request, '403.html', status=403)
+
+def bad_request(request, exception):
+    return render(request, '400.html', status=400)</code></pre>
+            
+            <p>Вы также можете вызывать исключения HTTP в представлениях:</p>
+            
+            <pre><code class="language-python">from django.http import Http404
+
+def article_detail(request, article_id):
+    try:
+        article = Article.objects.get(pk=article_id)
+    except Article.DoesNotExist:
+        raise Http404("Статья не найдена")
+    
+    return render(request, 'article_detail.html', {'article': article})</code></pre>
+        </section>
+        
+        <div class="quiz-container">
+            <h2>Проверьте свои знания</h2>
+            <div class="quiz" data-topic="views">
+                <div class="question">
+                    <p>1. Какой объект Django автоматически передает в представление информацию о HTTP-запросе?</p>
+                    <div class="options">
+                        <label><input type="radio" name="q1" value="a"> HttpResponse</label>
+                        <label><input type="radio" name="q1" value="b"> HttpRequest</label>
+                        <label><input type="radio" name="q1" value="c"> HttpContext</label>
+                        <label><input type="radio" name="q1" value="d"> HttpSession</label>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+                
+                <div class="question">
+                    <p>2. Какой метод используется для преобразования классового представления в функцию представления для использования в URL-шаблонах?</p>
+                    <div class="options">
+                        <label><input type="radio" name="q2" value="a"> to_view()</label>
+                        <label><input type="radio" name="q2" value="b"> as_view()</label>
+                        <label><input type="radio" name="q2" value="c"> get_view()</label>
+                        <label><input type="radio" name="q2" value="d"> view()</label>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+                
+                <div class="question">
+                    <p>3. Какой декоратор используется для ограничения доступа к представлению только для аутентифицированных пользователей?</p>
+                    <div class="options">
+                        <label><input type="radio" name="q3" value="a"> @require_auth</label>
+                        <label><input type="radio" name="q3" value="b"> @login_required</label>
+                        <label><input type="radio" name="q3" value="c"> @user_passes_test</label>
+                        <label><input type="radio" name="q3" value="d"> @authenticated_only</label>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+                
+                <button class="check-answers">Проверить ответы</button>
+                <div class="quiz-results"></div>
+            </div>
+        </div>
+    </template>
+
+    <template id="templates-template">
+    <h1>Шаблоны (Templates)</h1>
+    <div class="chapter-meta">
+        <span class="reading-time">⏱️ Время чтения: 25 минут</span>
+        <span class="difficulty">🔄 Сложность: Средняя</span>
+    </div>
+    
+    <section>
+        <h2>Что такое шаблоны в Django?</h2>
+        <p>Шаблоны в Django — это текстовые файлы, которые определяют структуру и внешний вид HTML-страниц. Они содержат статический HTML-код и специальные теги шаблонов Django, которые позволяют динамически генерировать содержимое.</p>
+        
+        <div class="info-box">
+            <h3>Ключевые особенности шаблонов Django:</h3>
+            <ul>
+                <li><strong>Язык шаблонов:</strong> Django имеет свой собственный язык шаблонов с тегами, фильтрами и переменными.</li>
+                <li><strong>Наследование шаблонов:</strong> Позволяет создавать базовые шаблоны и расширять их в дочерних шаблонах.</li>
+                <li><strong>Включение шаблонов:</strong> Позволяет включать один шаблон в другой для повторного использования кода.</li>
+                <li><strong>Контекст:</strong> Данные передаются в шаблоны через контекст, который представляет собой словарь переменных.</li>
+            </ul>
+        </div>
+    </section>
+    
+    <section>
+        <h2>Настройка системы шаблонов</h2>
+        <p>Настройки системы шаблонов находятся в файле <code>settings.py</code> вашего проекта:</p>
+        
+        <pre><code class="language-python">TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [BASE_DIR / 'templates'],  # Директории для поиска шаблонов
+        'APP_DIRS': True,  # Искать шаблоны в директориях приложений
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+                # Можно добавить свои процессоры контекста
+            ],
+        },
+    },
+]</code></pre>
+        
+        <div class="info-box">
+            <h3>Структура директорий шаблонов:</h3>
+            <p>По умолчанию Django ищет шаблоны в директории <code>templates</code> каждого установленного приложения:</p>
+            <div class="file-structure">
+                <pre>
+myproject/
+├── myapp/
+│   ├── templates/
+│   │   └── myapp/
+│   │       ├── base.html
+│   │       ├── index.html
+│   │       └── detail.html
+├── templates/  # Общие шаблоны проекта
+│   ├── base.html
+│   ├── header.html
+│   └── footer.html
+                </pre>
+            </div>
+            <p>Рекомендуется создавать поддиректорию с именем приложения внутри директории <code>templates</code> для избежания конфликтов имен.</p>
+        </div>
+    </section>
+    
+    <section>
+        <h2>Синтаксис шаблонов</h2>
+        <p>Язык шаблонов Django использует несколько типов синтаксических конструкций:</p>
+        
+        <h3>1. Переменные</h3>
+        <p>Переменные заключаются в двойные фигурные скобки и заменяются значениями из контекста:</p>
+        
+        <pre><code class="language-html"><!-- Простая переменная -->
+&lt;h1&gt;{{ title }}&lt;/h1&gt;
+
+<!-- Доступ к атрибутам объекта -->
+&lt;p&gt;Автор: {{ article.author.name }}&lt;/p&gt;
+
+<!-- Доступ к элементам словаря -->
+&lt;p&gt;Категория: {{ categories.0 }}&lt;/p&gt;</code></pre>
+        
+        <h3>2. Теги</h3>
+        <p>Теги заключаются в {% %} и используются для выполнения логики в шаблоне:</p>
+        
+        <pre><code class="language-html"><!-- Условный оператор -->
+{% if user.is_authenticated %}
+    &lt;p&gt;Привет, {{ user.username }}!&lt;/p&gt;
+{% else %}
+    &lt;p&gt;Пожалуйста, &lt;a href="{% url 'login' %}"&gt;войдите&lt;/a&gt;.&lt;/p&gt;
+{% endif %}
+
+<!-- Цикл -->
+&lt;ul&gt;
+{% for article in articles %}
+    &lt;li&gt;{{ article.title }}&lt;/li&gt;
+{% empty %}
+    &lt;li&gt;Нет доступных статей.&lt;/li&gt;
+{% endfor %}
+&lt;/ul&gt;
+
+<!-- URL-тег -->
+&lt;a href="{% url 'article_detail' article.id %}"&gt;Подробнее&lt;/a&gt;</code></pre>
+        
+        <h3>3. Фильтры</h3>
+        <p>Фильтры применяются к переменным с помощью символа | и изменяют их значения:</p>
+        
+        <pre><code class="language-html"><!-- Преобразование в верхний регистр -->
+&lt;p&gt;{{ title|upper }}&lt;/p&gt;
+
+<!-- Форматирование даты -->
+&lt;p&gt;Опубликовано: {{ article.pub_date|date:"d.m.Y" }}&lt;/p&gt;
+
+<!-- Значение по умолчанию -->
+&lt;p&gt;Автор: {{ article.author|default:"Аноним" }}&lt;/p&gt;
+
+<!-- Обрезка текста -->
+&lt;p&gt;{{ article.content|truncatewords:30 }}&lt;/p&gt;
+
+<!-- Экранирование HTML -->
+&lt;p&gt;{{ article.content|escape }}&lt;/p&gt;
+
+<!-- Несколько фильтров -->
+&lt;p&gt;{{ article.title|lower|truncatechars:20 }}&lt;/p&gt;</code></pre>
+        
+        <h3>4. Комментарии</h3>
+        <p>Комментарии в шаблонах Django не отображаются в итоговом HTML:</p>
+        
+        <pre><code class="language-html">{# Это однострочный комментарий #}
+
+{% comment %}
+Это многострочный комментарий.
+Он может содержать {{ переменные }} и {% теги %}.
+{% endcomment %}</code></pre>
+    </section>
+    
+    <section>
+        <h2>Наследование шаблонов</h2>
+        <p>Наследование шаблонов позволяет создать базовый шаблон с общей структурой и расширять его в дочерних шаблонах. Это помогает избежать дублирования кода и обеспечивает единообразие дизайна.</p>
+        
+        <h3>Базовый шаблон (base.html)</h3>
+        <pre><code class="language-html"><!DOCTYPE html>
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;{% block title %}Мой сайт{% endblock %}&lt;/title&gt;
+    &lt;link rel="stylesheet" href="{% static 'css/style.css' %}"&gt;
+    {% block extra_css %}{% endblock %}
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;header&gt;
+        {% include "header.html" %}
+    &lt;/header&gt;
+    
+    &lt;main&gt;
+        {% block content %}
+        &lt;p&gt;Содержимое по умолчанию.&lt;/p&gt;
+        {% endblock %}
+    &lt;/main&gt;
+    
+    &lt;footer&gt;
+        {% include "footer.html" %}
+    &lt;/footer&gt;
+    
+    &lt;script src="{% static 'js/script.js' %}"&gt;&lt;/script&gt;
+    {% block extra_js %}{% endblock %}
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        
+        <h3>Дочерний шаблон (article_detail.html)</h3>
+        <pre><code class="language-html">{% extends "base.html" %}
+
+{% block title %}{{ article.title }} | Мой сайт{% endblock %}
+
+{% block extra_css %}
+&lt;link rel="stylesheet" href="{% static 'css/article.css' %}"&gt;
+{% endblock %}
+
+{% block content %}
+&lt;article&gt;
+    &lt;h1&gt;{{ article.title }}&lt;/h1&gt;
+    &lt;p class="meta"&gt;Автор: {{ article.author }} | Опубликовано: {{ article.pub_date|date:"d.m.Y" }}&lt;/p&gt;
+    
+    &lt;div class="content"&gt;
+        {{ article.content|linebreaks }}
+    &lt;/div&gt;
+    
+    &lt;div class="tags"&gt;
+        {% for tag in article.tags.all %}
+            &lt;span class="tag"&gt;{{ tag.name }}&lt;/span&gt;
+        {% endfor %}
+    &lt;/div&gt;
+&lt;/article&gt;
+{% endblock %}
+
+{% block extra_js %}
+&lt;script src="{% static 'js/article.js' %}"&gt;&lt;/script&gt;
+{% endblock %}</code></pre>
+        
+        <div class="info-box">
+            <h3>Блоки в шаблонах:</h3>
+            <ul>
+                <li><code>{% block name %}...{% endblock %}</code>: Определяет блок, который может быть переопределен в дочерних шаблонах.</li>
+                <li><code>{% extends "template_name" %}</code>: Указывает, что текущий шаблон расширяет указанный шаблон.</li>
+                <li>Дочерний шаблон может переопределить любой блок из родительского шаблона.</li>
+                <li>Для включения содержимого родительского блока в дочернем используйте <code>{{ block.super }}</code>.</li>
+            </ul>
+        </div>
+    </section>
+    
+    <section>
+        <h2>Включение шаблонов</h2>
+        <p>Включение шаблонов позволяет вставлять содержимое одного шаблона в другой. Это полезно для повторно используемых компонентов, таких как заголовки, подвалы, навигационные меню и т.д.</p>
+        
+        <pre><code class="language-html"><!-- Простое включение -->
+{% include "header.html" %}
+
+<!-- Включение с переменными -->
+{% include "article_card.html" with article=article only %}
+
+<!-- Включение с условием -->
+{% if user.is_authenticated %}
+    {% include "user_menu.html" %}
+{% else %}
+    {% include "login_form.html" %}
+{% endif %}</code></pre>
+        
+        <p>Пример включаемого шаблона (article_card.html):</p>
+        
+        <pre><code class="language-html">&lt;div class="article-card"&gt;
+    &lt;h2&gt;&lt;a href="{% url 'article_detail' article.id %}"&gt;{{ article.title }}&lt;/a&gt;&lt;/h2&gt;
+    &lt;p class="meta"&gt;{{ article.author }} | {{ article.pub_date|date:"d.m.Y" }}&lt;/p&gt;
+    &lt;p&gt;{{ article.summary|truncatewords:30 }}&lt;/p&gt;
+    &lt;a href="{% url 'article_detail' article.id %}" class="read-more"&gt;Читать далее&lt;/a&gt;
+&lt;/div&gt;</code></pre>
+    </section>
+    
+    <section>
+        <h2>Пользовательские теги и фильтры</h2>
+        <p>Django позволяет создавать собственные теги и фильтры шаблонов для расширения функциональности системы шаблонов.</p>
+        
+        <h3>Создание пользовательских фильтров</h3>
+        <p>Для создания пользовательских фильтров необходимо создать файл <code>templatetags/custom_filters.py</code> в вашем приложении:</p>
+        
+        <pre><code class="language-python">from django import template
+from django.template.defaultfilters import stringfilter
+
+register = template.Library()
+
+@register.filter
+@stringfilter
+def cut_middle(value, length=10):
+    """Обрезает середину строки, оставляя начало и конец."""
+    if len(value) <= length:
+        return value
+    
+    half = length // 2
+    return value[:half] + '...' + value[-half:]
+
+@register.filter
+def get_item(dictionary, key):
+    """Получает элемент словаря по ключу."""
+    return dictionary.get(key, '')</code></pre>
+        
+        <p>Использование пользовательских фильтров в шаблоне:</p>
+        
+        <pre><code class="language-html">{% load custom_filters %}
+
+&lt;p&gt;{{ long_text|cut_middle:20 }}&lt;/p&gt;
+&lt;p&gt;{{ user_data|get_item:"email" }}&lt;/p&gt;</code></pre>
+        
+        <h3>Создание пользовательских тегов</h3>
+        <p>Для создания пользовательских тегов используйте тот же файл <code>templatetags/custom_tags.py</code>:</p>
+        
+        <pre><code class="language-python">from django import template
+import datetime
+
+register = template.Library()
+
+@register.simple_tag
+def current_time(format_string="%d.%m.%Y %H:%M"):
+    """Возвращает текущее время в указанном формате."""
+    return datetime.datetime.now().strftime(format_string)
+
+@register.inclusion_tag('tags/recent_articles.html')
+def show_recent_articles(count=5):
+    """Отображает список последних статей."""
+    from myapp.models import Article
+    recent_articles = Article.objects.order_by('-pub_date')[:count]
+    return {'articles': recent_articles}</code></pre>
+        
+        <p>Шаблон для inclusion-тега (tags/recent_articles.html):</p>
+        
+        <pre><code class="language-html">&lt;div class="recent-articles"&gt;
+    &lt;h3&gt;Последние статьи&lt;/h3&gt;
+    &lt;ul&gt;
+        {% for article in articles %}
+            &lt;li&gt;&lt;a href="{% url 'article_detail' article.id %}"&gt;{{ article.title }}&lt;/a&gt;&lt;/li&gt;
+        {% empty %}
+            &lt;li&gt;Нет доступных статей.&lt;/li&gt;
+        {% endfor %}
+    &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+        
+        <p>Использование пользовательских тегов в шаблоне:</p>
+        
+        <pre><code class="language-html">{% load custom_tags %}
+
+&lt;p&gt;Текущее время: {% current_time "%H:%M" %}&lt;/p&gt;
+
+{% show_recent_articles 3 %}</code></pre>
+    </section>
+    
+    <section>
+        <h2>Контекстные процессоры</h2>
+        <p>Контекстные процессоры — это функции, которые добавляют переменные в контекст каждого шаблона. Они полезны для данных, которые должны быть доступны во всех шаблонах, например, информация о текущем пользователе или общие настройки сайта.</p>
+        
+        <p>Создание контекстного процессора (в файле <code>context_processors.py</code> вашего приложения):</p>
+        
+        <pre><code class="language-python">def site_settings(request):
+    """Добавляет общие настройки сайта в контекст."""
+    return {
+        'site_name': 'Мой блог',
+        'site_description': 'Блог о программировании и технологиях',
+        'contact_email': 'info@example.com',
+    }
+
+def categories(request):
+    """Добавляет список категорий в контекст."""
+    from myapp.models import Category
+    return {
+        'categories': Category.objects.all(),
+    }</code></pre>
+        
+        <p>Регистрация контекстных процессоров в <code>settings.py</code>:</p>
+        
+        <pre><code class="language-python">TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [BASE_DIR / 'templates'],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+                'myapp.context_processors.site_settings',  # Добавляем наш процессор
+                'myapp.context_processors.categories',     # Добавляем наш процессор
+            ],
+        },
+    },
+]</code></pre>
+        
+        <p>Использование переменных из контекстных процессоров в шаблоне:</p>
+        
+        <pre><code class="language-html">&lt;header&gt;
+    &lt;h1&gt;{{ site_name }}&lt;/h1&gt;
+    &lt;p&gt;{{ site_description }}&lt;/p&gt;
+&lt;/header&gt;
+
+&lt;nav&gt;
+    &lt;ul&gt;
+        {% for category in categories %}
+            &lt;li&gt;&lt;a href="{% url 'category_detail' category.slug %}"&gt;{{ category.name }}&lt;/a&gt;&lt;/li&gt;
+        {% endfor %}
+    &lt;/ul&gt;
+&lt;/nav&gt;
+
+&lt;footer&gt;
+    &lt;p&gt;Свяжитесь с нами: {{ contact_email }}&lt;/p&gt;
+&lt;/footer&gt;</code></pre>
+    </section>
+    
+    <section>
+        <h2>Статические файлы в шаблонах</h2>
+        <p>Django предоставляет удобный способ работы со статическими файлами (CSS, JavaScript, изображения) в шаблонах.</p>
+        
+        <p>Для использования статических файлов необходимо загрузить тег <code>static</code>:</p>
+        
+        <pre><code class="language-html">{% load static %}
+
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Мой сайт&lt;/title&gt;
+    &lt;link rel="stylesheet" href="{% static 'css/style.css' %}"&gt;
+    &lt;link rel="icon" href="{% static 'images/favicon.ico' %}"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;header&gt;
+        &lt;img src="{% static 'images/logo.png' %}" alt="Логотип"&gt;
+    &lt;/header&gt;
+    
+    &lt;!-- Содержимое страницы --&gt;
+    
+    &lt;script src="{% static 'js/script.js' %}"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        
+        <div class="info-box">
+            <h3>Статические файлы в продакшене:</h3>
+            <p>В продакшене рекомендуется использовать команду <code>collectstatic</code> для сбора всех статических файлов в одну директорию:</p>
+            <pre><code class="language-bash">python manage.py collectstatic</code></pre>
+            <p>Также рекомендуется использовать веб-сервер (например, Nginx) для обслуживания статических файлов вместо Django.</p>
+        </div>
+    </section>
+    
+    <section>
+        <h2>Локализация и интернационализация</h2>
+        <p>Django предоставляет инструменты для создания многоязычных сайтов с помощью системы шаблонов.</p>
+        
+        <p>Для использования локализации в шаблонах необходимо загрузить тег <code>i18n</code>:</p>
+        
+        <pre><code class="language-html">{% load i18n %}
+
+&lt;h1&gt;{% trans "Добро пожаловать" %}&lt;/h1&gt;
+
+&lt;p&gt;{% blocktrans with name=user.username %}Привет, {{ name }}!{% endblocktrans %}&lt;/p&gt;
+
+&lt;p&gt;
+    {% blocktrans count counter=items|length %}
+        У вас {{ counter }} непрочитанное сообщение.
+    {% plural %}
+        У вас {{ counter }} непрочитанных сообщений.
+    {% endblocktrans %}
+&lt;/p&gt;</code></pre>
+        
+        <p>Для переключения языка можно использовать форму:</p>
+        
+        <pre><code class="language-html">{% load i18n %}
+
+&lt;form action="{% url 'set_language' %}" method="post"&gt;
+    {% csrf_token %}
+    &lt;input name="next" type="hidden" value="{{ redirect_to }}"&gt;
+    &lt;select name="language"&gt;
+        {% get_current_language as LANGUAGE_CODE %}
+        {% get_available_languages as LANGUAGES %}
+        {% for lang_code, lang_name in LANGUAGES %}
+            &lt;option value="{{ lang_code }}" {% if lang_code == LANGUAGE_CODE %}selected{% endif %}&gt;
+                {{ lang_name }}
+            &lt;/option&gt;
+        {% endfor %}
+    &lt;/select&gt;
+    &lt;input type="submit" value="Go"&gt;
+&lt;/form&gt;</code></pre>
+    </section>
+    
+    <section>
+        <h2>Безопасность в шаблонах</h2>
+        <p>Django автоматически экранирует переменные в шаблонах для предотвращения XSS-атак. Однако иногда требуется отключить экранирование или применить дополнительные меры безопасности.</p>
+        
+        <h3>Экранирование и отключение экранирования</h3>
+        <pre><code class="language-html"><!-- Автоматическое экранирование -->
+&lt;p&gt;{{ user_input }}&lt;/p&gt;  <!-- Безопасно -->
+
+<!-- Отключение экранирования (использовать с осторожностью) -->
+&lt;p&gt;{{ user_input|safe }}&lt;/p&gt;  <!-- Небезопасно, если user_input содержит вредоносный код -->
+
+<!-- Явное экранирование -->
+&lt;p&gt;{{ user_input|escape }}&lt;/p&gt;  <!-- Безопасно -->
+
+<!-- Блок без экранирования -->
+{% autoescape off %}
+    {{ html_content }}
+{% endautoescape %}</code></pre>
+        
+        <h3>Защита от CSRF</h3>
+        <p>Django предоставляет защиту от CSRF-атак с помощью тега <code>csrf_token</code>:</p>
+        
+        <pre><code class="language-html">&lt;form method="post" action="{% url 'contact' %}"&gt;
+    {% csrf_token %}
+    &lt;!-- Поля формы --&gt;
+    &lt;button type="submit"&gt;Отправить&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+    </section>
+    
+    <section>
+        <h2>Отладка шаблонов</h2>
+        <p>Django предоставляет несколько инструментов для отладки шаблонов:</p>
+        
+        <h3>1. Тег debug</h3>
+        <pre><code class="language-html">{% debug %}</code></pre>
+        <p>Этот тег выводит текущий контекст шаблона, что полезно для отладки.</p>
+        
+        <h3>2. Django Debug Toolbar</h3>
+        <p>Django Debug Toolbar — это мощный инструмент для отладки, который показывает информацию о шаблонах, SQL-запросах, настройках и многом другом.</p>
+        
+        <pre><code class="language-bash">pip install django-debug-toolbar</code></pre>
+        
+        <p>Добавьте его в <code>INSTALLED_APPS</code> и настройте в соответствии с документацией.</p>
+        
+        <h3>3. Ошибки в шаблонах</h3>
+        <p>При возникновении ошибки в шаблоне Django показывает подробную информацию об ошибке, включая номер строки и контекст.</p>
+    </section>
+    
+    <div class="quiz-container">
+        <h2>Проверьте свои знания</h2>
+        <div class="quiz" data-topic="templates">
+            <div class="question">
+                <p>1. Какой тег используется для наследования шаблонов в Django?</p>
+                <div class="options">
+                    <label><input type="radio" name="q1" value="a"> {% inherit %}</label>
+                    <label><input type="radio" name="q1" value="b"> {% extends %}</label>
+                    <label><input type="radio" name="q1" value="c"> {% include %}</label>
+                    <label><input type="radio" name="q1" value="d"> {% parent %}</label>
+                </div>
+                <div class="feedback"></div>
+            </div>
+            
+            <div class="question">
+                <p>2. Какой фильтр используется для ограничения количества слов в тексте?</p>
+                <div class="options">
+                    <label><input type="radio" name="q2" value="a"> {{ text|limit:10 }}</label>
+                    <label><input type="radio" name="q2" value="b"> {{ text|truncate:10 }}</label>
+                    <label><input type="radio" name="q2" value="c"> {{ text|truncatewords:10 }}</label>
+                    <label><input type="radio" name="q2" value="d"> {{ text|wordlimit:10 }}</label>
+                </div>
+                <div class="feedback"></div>
+            </div>
+            
+            <div class="question">
+                <p>3. Какой тег используется для защиты от CSRF-атак в формах?</p>
+                <div class="options">
+                    <label><input type="radio" name="q3" value="a"> {% csrf %}</label>
+                    <label><input type="radio" name="q3" value="b"> {% csrf_token %}</label>
+                    <label><input type="radio" name="q3" value="c"> {% csrf_protect %}</label>
+                    <label><input type="radio" name="q3" value="d"> {% security_token %}</label>
+                </div>
+                <div class="feedback"></div>
+            </div>
+            
+            <button class="check-answers">Проверить ответы</button>
+            <div class="quiz-results"></div>
+        </div>
+    </div>
+</template>
 
     <script src="script.js"></script>
 </body>
