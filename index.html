@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Django: Полное руководство</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/html.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="https://static.djangoproject.com/img/logos/django-logo-negative.svg" alt="Django Logo">
+        </div>
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Поиск по темам...">
+            <button id="search-button">Поиск</button>
+            <div id="search-results" class="search-results"></div>
+        </div>
+        <div class="theme-toggle">
+            <button id="theme-toggle-btn">🌙</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3>Содержание</h3>
+                <button id="mobile-menu-toggle" class="mobile-only">☰</button>
+            </div>
+            <ul class="topics">
+                <li data-topic="introduction" class="active">Введение в Django</li>
+                <li data-topic="installation">Установка и настройка</li>
+                <li data-topic="project-creation">Создание проекта</li>
+                <li data-topic="models">Модели и базы данных</li>
+                <li data-topic="views">Представления (Views)</li>
+                <li data-topic="templates">Шаблоны (Templates)</li>
+                <li data-topic="urls">URL-маршрутизация</li>
+                <li data-topic="forms">Формы</li>
+                <li data-topic="admin">Административный интерфейс</li>
+                <li data-topic="users">Пользователи и авторизация</li>
+                <li data-topic="migrations">Миграции</li>
+                <li data-topic="rest-framework">Django REST Framework</li>
+                <li data-topic="testing">Тестирование</li>
+                <li data-topic="deployment">Развертывание</li>
+                <li data-topic="best-practices">Лучшие практики</li>
+            </ul>
+            <div class="progress-container">
+                <h4>Ваш прогресс</h4>
+                <div class="progress-bar">
+                    <div class="progress" id="progress-indicator"></div>
+                </div>
+                <p id="progress-text">0% завершено</p>
+            </div>
+        </nav>
+
+        <main id="content">
+            <!-- Содержимое будет загружаться динамически -->
+            <div id="topic-content"></div>
+            
+            <div class="navigation-buttons">
+                <button id="prev-topic" disabled>← Предыдущая тема</button>
+                <button id="next-topic">Следующая тема →</button>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <p>© 2023 Django: Полное руководство | Создано с ❤️ для начинающих разработчиков</p>
+    </footer>
+
+    <!-- Шаблоны для тем -->
+    <template id="introduction-template">
+        <h1>Введение в Django</h1>
+        <div class="chapter-meta">
+            <span class="reading-time">⏱️ Время чтения: 10 минут</span>
+            <span class="difficulty">🔄 Сложность: Начальная</span>
+        </div>
+        
+        <section>
+            <h2>Что такое Django?</h2>
+            <p>Django — это высокоуровневый веб-фреймворк на языке Python, который способствует быстрой разработке и чистому, прагматичному дизайну. Он был создан опытными разработчиками и решает многие проблемы веб-разработки, поэтому вы можете сосредоточиться на написании своего приложения, не изобретая велосипед.</p>
+            
+            <div class="info-box">
+                <h3>Ключевые особенности Django:</h3>
+                <ul>
+                    <li><strong>Быстрота:</strong> Django был разработан, чтобы помочь разработчикам создавать приложения как можно быстрее.</li>
+                    <li><strong>Безопасность:</strong> Django серьезно относится к безопасности и помогает разработчикам избегать многих распространенных ошибок безопасности.</li>
+                    <li><strong>Масштабируемость:</strong> Django очень масштабируем и может обрабатывать трафик и данные на уровне самых загруженных сайтов.</li>
+                    <li><strong>Универсальность:</strong> Компании, организации и правительства используют Django для создания всех видов вещей — от систем управления контентом до социальных сетей и научных вычислительных платформ.</li>
+                </ul>
+            </div>
+        </section>
+        
+        <section>
+            <h2>Философия Django</h2>
+            <p>Django следует принципу "не повторяйся" (DRY - Don't Repeat Yourself), который поощряет минимизацию повторения кода. Он также придерживается архитектурного шаблона MTV (Model-Template-View), который является вариацией MVC (Model-View-Controller).</p>
+            
+            <div class="comparison-table">
+                <h3>Сравнение MTV и MVC</h3>
+                <table>
+                    <tr>
+                        <th>Django (MTV)</th>
+                        <th>Традиционный MVC</th>
+                        <th>Описание</th>
+                    </tr>
+                    <tr>
+                        <td>Model</td>
+                        <td>Model</td>
+                        <td>Слой доступа к данным</td>
+                    </tr>
+                    <tr>
+                        <td>Template</td>
+                        <td>View</td>
+                        <td>Слой представления данных</td>
+                    </tr>
+                    <tr>
+                        <td>View</td>
+                        <td>Controller</td>
+                        <td>Слой бизнес-логики</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+        
+        <section>
+            <h2>Кто использует Django?</h2>
+            <p>Django используется многими известными сайтами и приложениями, включая:</p>
+            <ul class="companies-list">
+                <li>Instagram</li>
+                <li>Pinterest</li>
+                <li>Mozilla</li>
+                <li>The Washington Post</li>
+                <li>Spotify</li>
+                <li>Dropbox</li>
+                <li>NASA</li>
+            </ul>
+        </section>
+        
+        <section>
+            <h2>Почему стоит изучать Django?</h2>
+            <p>Django предлагает множество преимуществ для разработчиков:</p>
+            <div class="advantages-grid">
+                <div class="advantage-card">
+                    <h3>Полная комплектация</h3>
+                    <p>Django включает в себя множество инструментов и библиотек "из коробки", что избавляет от необходимости искать и интегрировать сторонние решения.</p>
+                </div>
+                <div class="advantage-card">
+                    <h3>Активное сообщество</h3>
+                    <p>Django имеет большое и активное сообщество разработчиков, которые постоянно улучшают фреймворк и создают полезные пакеты расширений.</p>
+                </div>
+                <div class="advantage-card">
+                    <h3>Отличная документация</h3>
+                    <p>Django известен своей подробной и хорошо структурированной документацией, которая помогает как новичкам, так и опытным разработчикам.</p>
+                </div>
+                <div class="advantage-card">
+                    <h3>Высокий спрос на рынке труда</h3>
+                    <p>Навыки Django высоко ценятся работодателями, и специалисты по Django обычно получают конкурентоспособную зарплату.</p>
+                </div>
+            </div>
+        </section>
+        
+        <div class="quiz-container">
+            <h2>Проверьте свои знания</h2>
+            <div class="quiz" data-topic="introduction">
+                <div class="question">
+                    <p>1. Какой архитектурный шаблон использует Django?</p>
+                    <div class="options">
+                        <label><input type="radio" name="q1" value="a"> MVC (Model-View-Controller)</label>
+                        <label><input type="radio" name="q1" value="b"> MTV (Model-Template-View)</label>
+                        <label><input type="radio" name="q1" value="c"> MVP (Model-View-Presenter)</label>
+                        <label><input type="radio" name="q1" value="d"> MVVM (Model-View-ViewModel)</label>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+                
+                <div class="question">
+                    <p>2. Какой принцип НЕ является частью философии Django?</p>
+                    <div class="options">
+                        <label><input type="radio" name="q2" value="a"> DRY (Don't Repeat Yourself)</label>
+                        <label><input type="radio" name="q2" value="b"> Явное лучше, чем неявное</label>
+                        <label><input type="radio" name="q2" value="c"> KISS (Keep It Simple, Stupid)</label>
+                        <label><input type="radio" name="q2" value="d"> Быстрая разработка</label>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+                
+                <div class="question">
+                    <p>3. Какой из следующих сайтов НЕ использует Django?</p>
+                    <div class="options">
+                        <label><input type="radio" name="q3" value="a"> Instagram</label>
+                        <label><input type="radio" name="q3" value="b"> Pinterest</label>
+                        <label><input type="radio" name="q3" value="c"> Facebook</label>
+                        <label><input type="radio" name="q3" value="d"> Dropbox</label>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+                
+                <button class="check-answers">Проверить ответы</button>
+                <div class="quiz-results"></div>
+            </div>
+        </div>
+    </template>
+
+    <template id="installation-template">
+        <h1>Установка и настройка Django</h1>
+        <div class="chapter-meta">
+            <span class="reading-time">⏱️ Время чтения: 15 минут</span>
+            <span class="difficulty">🔄 Сложность: Начальная</span>
+        </div>
+        
+        <section>
+            <h2>Подготовка окружения</h2>
+            <p>Перед установкой Django вам потребуется установить Python. Django 3.2 и выше требует Python 3.6 или более новой версии.</p>
+            
+            <div class="tabs">
+                <div class="tab-headers">
+                    <button class="tab-header active" data-tab="windows">Windows</button>
+                    <button class="tab-header" data-tab="macos">macOS</button>
+                    <button class="tab-header" data-tab="linux">Linux</button>
+                </div>
+                
+                <div class="tab-content active" data-tab="windows">
+                    <h3>Установка Python на Windows</h3>
+                    <ol>
+                        <li>Скачайте последнюю версию Python с <a href="https://www.python.org/downloads/windows/" target="_blank">официального сайта</a>.</li>
+                        <li>Запустите установщик и убедитесь, что опция "Add Python to PATH" отмечена.</li>
+                        <li>Следуйте инструкциям установщика.</li>
+                        <li>Проверьте установку, открыв командную строку и введя:
+                            <pre><code class="language-bash">python --version</code></pre>
+                        </li>
+                    </ol>
+                </div>
+                
+                <div class="tab-content" data-tab="macos">
+                    <h3>Установка Python на macOS</h3>
+                    <p>macOS обычно поставляется с предустановленным Python, но рекомендуется установить последнюю версию:</p>
+                    <ol>
+                        <li>Установите Homebrew (если еще не установлен):
+                            <pre><code class="language-bash">ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"</code></pre>
+                        </li>
+                        <li>Установите Python:
+                            <pre><code class="language-bash">brew install python</code></pre>
+                        </li>
+                        <li>Проверьте установку:
+                            <pre><code class="language-bash">python3 --version</code></pre>
+                        </li>
+                    </ol>
+                </div>
+                
+                <div class="tab-content" data-tab="linux">
+                    <h3>Установка Python на Linux</h3>
+                    <p>Большинство дистрибутивов Linux поставляются с предустановленным Python. Проверьте версию:</p>
+                    <pre><code class="language-bash">python3 --version</code></pre>
+                    
+                    <p>Если Python не установлен или версия устарела, установите его с помощью менеджера пакетов:</p>
+                    
+                    <div class="sub-tabs">
+                        <div class="tab-headers">
+                            <button class="tab-header active" data-tab="ubuntu">Ubuntu/Debian</button>
+                            <button class="tab-header" data-tab="fedora">Fedora/RHEL</button>
+                            <button class="tab-header" data-tab="arch">Arch Linux</button>
+                        </div>
+                        
+                        <div class="tab-content active" data-tab="ubuntu">
+                            <pre><code class="language-bash">sudo apt update
+sudo apt install python3 python3-pip</code></pre>
+                        </div>
+                        
+                        <div class="tab-content" data-tab="fedora">
+                            <pre><code class="language-bash">sudo dnf install python3 python3-pip</code></pre>
+                        </div>
+                        
+                        <div class="tab-content" data-tab="arch">
+                            <pre><code class="language-bash">sudo pacman -S python python-pip</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section>
+            <h2>Создание виртуального окружения</h2>
+            <p>Рекомендуется использовать виртуальные окружения для изоляции зависимостей проекта. Python поставляется с модулем venv для создания виртуальных окружений.</p>
+            
+            <div class="tabs">
+                <div class="tab-headers">
+                    <button class="tab-header active" data-tab="venv-windows">Windows</button>
+                    <button class="tab-header" data-tab="venv-unix">macOS/Linux</button>
+                </div>
+                
+                <div class="tab-content active" data-tab="venv-windows">
+                    <pre><code class="language-bash"># Создание виртуального окружения
+python -m venv myenv
+
+# Активация виртуального окружения
+myenv\Scripts\activate</code></pre>
+                </div>
+                
+                <div class="tab-content" data-tab="venv-unix">
+                    <pre><code class="language-bash"># Создание виртуального окружения
+python3 -m venv myenv
+
+# Активация виртуального окружения
+source myenv/bin/activate</code></pre>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <h3>Примечание:</h3>
+                <p>После активации виртуального окружения, в начале командной строки должен появиться префикс с именем окружения, например: <code>(myenv)</code>.</p>
+                <p>Для деактивации виртуального окружения используйте команду <code>deactivate</code>.</p>
+            </div>
+        </section>
+        
+        <section>
+            <h2>Установка Django</h2>
+            <p>После активации виртуального окружения вы можете установить Django с помощью pip:</p>
+            
+            <pre><code class="language-bash"># Установка последней версии Django
+pip install django
+
+# Проверка установки
+python -m django --version</code></pre>
+            
+            <p>Вы также можете установить конкретную версию Django:</p>
+            
+            <pre><code class="language-bash"># Установка Django версии 4.2
+pip install django==4.2</code></pre>
+            
+            <div class="warning-box">
+                <h3>Важно!</h3>
+                <p>Всегда проверяйте совместимость версии Django с версией Python. Актуальную информацию о совместимости можно найти в <a href="https://docs.djangoproject.com/en/stable/faq/install/#faq-python-version-support" target="_blank">официальной документации</a>.</p>
+            </div>
+        </section>
+        
+        <section>
+            <h2>Установка дополнительных инструментов</h2>
+            <p>Для более комфортной разработки рекомендуется установить следующие инструменты:</p>
+            
+            <div class="tool-cards">
+                <div class="tool-card">
+                    <h3>Django Debug Toolbar</h3>
+                    <p>Инструмент для отладки Django-приложений, который отображает полезную информацию о текущем запросе/ответе.</p>
+                    <pre><code class="language-bash">pip install django-debug-toolbar</code></pre>
+                </div>
+                
+                <div class="tool-card">
+                    <h3>Django Extensions</h3>
+                    <p>Набор пользовательских расширений для Django, включая дополнительные команды управления.</p>
+                    <pre><code class="language-bash">pip install django-extensions</code></pre>
+                </div>
+                
+                <div class="tool-card">
+                    <h3>Django REST Framework</h3>
+                    <p>Мощный и гибкий инструмент для создания Web API.</p>
+                    <pre><code class="language-bash">pip install djangorestframework</code></pre>
+                </div>
+                
+                <div class="tool-card">
+                    <h3>Pillow</h3>
+                    <p>Библиотека для работы с изображениями, необходимая для поля ImageField в моделях Django.</p>
+                    <pre><code class="language-bash">pip install pillow</code></pre>
+                </div>
+            </div>
+        </section>
+        
+        <section>
+            <h2>Настройка IDE</h2>
+            <p>Хорошая IDE может значительно повысить продуктивность разработки. Вот несколько популярных вариантов для разработки на Django:</p>
+            
+            <div class="ide-comparison">
+                <div class="ide-card">
+                    <h3>PyCharm</h3>
+                    <p><strong>Плюсы:</strong> Специализированная поддержка Django, отладка, интеграция с базами данных, автодополнение.</p>
+                    <p><strong>Минусы:</strong> Профессиональная версия платная, требовательна к ресурсам.</p>
+                    <a href="https://www.jetbrains.com/pycharm/download/" target="_blank" class="download-button">Скачать PyCharm</a>
+                </div>
+                
+                <div class="ide-card">
+                    <h3>Visual Studio Code</h3>
+                    <p><strong>Плюсы:</strong> Бесплатный, легкий, множество расширений, включая Django-специфичные.</p>
+                    <p><strong>Минусы:</strong> Требует настройки для полноценной работы с Django.</p>
+                    <a href="https://code.visualstudio.com/download" target="_blank" class="download-button">Скачать VS Code</a>
+                </div>
+                
+                <div class="ide-card">
+                    <h3>Sublime Text</h3>
+                    <p><strong>Плюсы:</strong> Быстрый, настраиваемый, поддержка множества плагинов.</p>
+                    <p><strong>Минусы:</strong> Платный (с бесплатным пробным периодом), меньше специфичных для Django функций.</p>
+                    <a href="https://www.sublimetext.com/download" target="_blank" class="download-button">Скачать Sublime Text</a>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <h3>Рекомендуемые расширения для VS Code:</h3>
+                <ul>
+                    <li>Python (Microsoft)</li>
+                    <li>Django (Baptiste Darthenay)</li>
+                    <li>Django Template (bibhasdn)</li>
+                    <li>SQLite Viewer</li>
+                </ul>
+            </div>
+        </section>
+        
+        <div class="quiz-container">
+            <h2>Проверьте свои знания</h2>
+            <div class="quiz" data-topic="installation">
+                <div class="question">
+                    <p>1. Какая минимальная версия Python требуется для Django 3.2 и выше?</p>
+                    <div class="options">
+                        <label><input type="radio" name="q1" value="a"> Python 2.7</label>
+                        <label><input type="radio" name="q1" value="b"> Python 3.4</label>
+                        <label><input type="radio" name="q1" value="c"> Python 3.6</label>
+                        <label><input type="radio" name="q1" value="d"> Python 3.8</label>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+                
+                <div class="question">
+                    <p>2. Какая команда используется для создания виртуального окружения в Python?</p>
+                    <div class="options">
+                        <label><input type="radio" name="q2" value="a"> python -m virtualenv myenv</label>
+                        <label><input type="radio" name="q2" value="b"> python -m venv myenv</label>
+                        <label><input type="radio" name="q2" value="c"> python -m env myenv</label>
+                        <label><input type="radio" name="q2" value="d"> python -m pip venv myenv</label>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+                
+                <div class="question">
+                    <p>3. Какая команда используется для установки Django?</p>
+                    <div class="options">
+                        <label><input type="radio" name="q3" value="a"> apt-get install django</label>
+                        <label><input type="radio" name="q3" value="b"> npm install django</label>
+                        <label><input type="radio" name="q3" value="c"> pip install django</label>
+                        <label><input type="radio" name="q3" value="d"> conda install django</label>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+                
+                <button class="check-answers">Проверить ответы</button>
+                <div class="quiz-results"></div>
+            </div>
+        </div>
+    </template>
+
+    <template id="project-creation-template">
+        <h1>Создание проекта Django</h1>
+        <div class="chapter-meta">
+            <span class="reading-time">⏱️ Время чтения: 20 минут</span>
+            <span class="difficulty">🔄 Сложность: Начальная</span>
+        </div>
+        
+        <section>
+            <h2>Создание нового проекта</h2>
+            <p>После установки Django вы можете создать новый проект с помощью команды <code>django-admin</code>:</p>
+            
+            <pre><code class="language-bash">django-admin startproject myproject</code></pre>
+            
+            <p>Эта команда создаст директорию <code>myproject</code> со следующей структурой:</p>
+            
+            <div class="file-structure">
+                <pre>
+myproject/
+├── manage.py
+└── myproject/
+    ├── __init__.py
+    ├── asgi.py
+    ├── settings.py
+    ├── urls.py
+    └── wsgi.py
+                </pre>
+            </div>
+            
+            <div class="info-box">
+                <h3>Описание файлов:</h3>
+                <ul>
+                    <li><strong>manage.py</strong>: Утилита командной строки для взаимодействия с проектом Django.</li>
+                    <li><strong>__init__.py</strong>: Пустой файл, который указывает Python, что этот каталог является пакетом Python.</li>
+                    <li><strong>asgi.py</strong>: Точка входа для ASGI-совместимых веб-серверов.</li>
+                    <li><strong>settings.py</strong>: Настройки/конфигурация для проекта Django.</li>
+                    <li><strong>urls.py</strong>: Объявления URL для проекта Django.</li>
+                    <li><strong>wsgi.py</strong>: Точка входа для WSGI-совместимых веб-серверов.</li>
+                </ul>
+            </div>
+        </section>
+        
+        <section>
+            <h2>Запуск сервера разработки</h2>
+            <p>Перейдите в директорию проекта и запустите сервер разработки:</p>
+            
+            <pre><code class="language-bash">cd myproject
+python manage.py runserver</code></pre>
+            
+            <p>По умолчанию сервер запускается на <code>http://127.0.0.1:8000/</code>. Вы можете изменить порт, указав его в команде:</p>
+            
+            <pre><code class="language-bash">python manage.py runserver 8080</code></pre>
+            
+            <p>Или указать IP-адрес и порт:</p>
+            
+            <pre><code class="language-bash">python manage.py runserver 0.0.0.0:8000</code></pre>
+            
+            <div class="warning-box">
+                <h3>Важно!</h3>
+                <p>Сервер разработки не предназначен для использования в производственной среде. Для развертывания приложения в продакшене используйте полноценный веб-сервер, такой как Nginx или Apache.</p>
+            </div>
+        </section>
+        
+        <section>
+            <h2>Создание приложения</h2>
+            <p>Проект Django состоит из одного или нескольких приложений. Приложение — это веб-приложение, которое делает что-то конкретное, например, система блогов, база данных публичных записей или простое приложение для опросов.</p>
+            
+            <p>Для создания нового приложения используйте команду <code>startapp</code>:</p>
+            
+            <pre><code class="language-bash">python manage.py startapp blog</code></pre>
+            
+            <p>Эта команда создаст директорию <code>blog</code> со следующей структурой:</p>
+            
+            <div class="file-structure">
+                <pre>
+blog/
+├── __init__.py
+├── admin.py
+├── apps.py
+├── migrations/
+│   └── __init__.py
+├── models.py
+├── tests.py
+└── views.py
+                </pre>
+            </div>
+            
+            <div class="info-box">
+                <h3>Описание файлов:</h3>
+                <ul>
+                    <li><strong>__init__.py</strong>: Пустой файл, который указывает Python, что этот каталог является пакетом Python.</li>
+                    <li><strong>admin.py</strong>: Конфигурация административного интерфейса для приложения.</li>
+                    <li><strong>apps.py</strong>: Конфигурация приложения.</li>
+                    <li><strong>migrations/</strong>: Директория, содержащая миграции базы данных.</li>
+                    <li><strong>models.py</strong>: Определения моделей данных приложения.</li>
+                    <li><strong>tests.py</strong>: Тесты для приложения.</li>
+                    <li><strong>views.py</strong>: Представления (функции или классы) для обработки HTTP-запросов.</li>
+                </ul>
+            </div>
+            
+            <p>После создания приложения необходимо добавить его в список установленных приложений в файле <code>settings.py</code>:</p>
+            
+            <pre><code class="language-python">INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'blog',  # Добавьте имя вашего приложения здесь
+]</code></pre>
+        </section>
+        
+        <section>
+            <h2>Настройка базы данных</h2>
+            <p>Django по умолчанию настроен на использование SQLite в качестве базы данных. Настройки базы данных находятся в файле <code>settings.py</code>:</p>
+            
+            <pre><code class="language-python">DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}</code></pre>
+            
+            <p>Вы можете изменить настройки для использования других баз данных, таких как PostgreSQL, MySQL или Oracle:</p>
+            
+            <div class="tabs">
+                <div class="tab-headers">
+                    <button class="tab-header active" data-tab="postgresql">PostgreSQL</button>
+                    <button class="tab-header" data-tab="mysql">MySQL</button>
+                    <button class="tab-header" data-tab="oracle">Oracle</button>
+                </div>
+                
+                <div class="tab-content active" data-tab="postgresql">
+                    <pre><code class="language-python">DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'mydatabase',
+        'USER': 'mydatabaseuser',
+        'PASSWORD': 'mypassword',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
+    }
+}</code></pre>
+                    <p>Для использования PostgreSQL необходимо установить пакет <code>psycopg2</code>:</p>
+                    <pre><code class="language-bash">pip install psycopg2</code></pre>
+                </div>
+                
+                <div class="tab-content" data-tab="mysql">
+                    <pre><code class="language-python">DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'mydatabase',
+        'USER': 'mydatabaseuser',
+        'PASSWORD': 'mypassword',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+    }
+}</code></pre>
+                    <p>Для использования MySQL необходимо установить пакет <code>mysqlclient</code>:</p>
+                    <pre><code class="language-bash">pip install mysqlclient</code></pre>
+                </div>
+                
+                <div class="tab-content" data-tab="oracle">
+                    <pre><code class="language-python">DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.oracle',
+        'NAME': 'xe',
+        'USER': 'mydatabaseuser',
+        'PASSWORD': 'mypassword',
+        'HOST': '127.0.0.1',
+        'PORT': '1521',
+    }
+}</code></pre>
+                    <p>Для использования Oracle необходимо установить пакет <code>cx_Oracle</code>:</p>
+                    <pre><code class="language-bash">pip install cx_Oracle</code></pre>
+                </div>
+            </div>
+        </section>
+        
+        <section>
+            <h2>Создание первого представления</h2>
+            <p>Давайте создадим простое представление, которое будет отображать текст "Hello, World!". Откройте файл <code>views.py</code> в вашем приложении и добавьте следующий код:</p>
+            
+            <pre><code class="language-python">from django.http import HttpResponse
+
+def hello_world(request):
+    return HttpResponse("Hello, World!")</code></pre>
+            
+            <p>Теперь создайте файл <code>urls.py</code> в директории вашего приложения:</p>
+            
+            <pre><code class="language-python">from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('hello/', views.hello_world, name='hello_world'),
+]</code></pre>
+            
+            <p>Затем откройте файл <code>urls.py</code> в директории проекта и добавьте URL вашего приложения:</p>
+            
+            <pre><code class="language-python">from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('blog/', include('blog.urls')),  # Замените 'blog' на имя вашего приложения
+]</code></pre>
+            
+            <p>Теперь вы можете запустить сервер разработки и перейти по адресу <code>http://127.0.0.1:8000/blog/hello/</code>, чтобы увидеть сообщение "Hello, World!".</p>
+        </section>
+        
+        <section>
+            <h2>Настройка статических файлов и медиа</h2>
+            <p>Django предоставляет встроенную поддержку для обработки статических файлов (CSS, JavaScript, изображения) и загружаемых пользователями медиафайлов.</p>
+            
+            <h3>Статические файлы</h3>
+            <p>Настройки для статических файлов находятся в файле <code>settings.py</code>:</p>
+            
+            <pre><code class="language-python">STATIC_URL = '/static/'
+
+# Дополнительные директории для статических файлов
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
+# Директория, в которую будут собраны все статические файлы при выполнении команды collectstatic
+STATIC_ROOT = BASE_DIR / "staticfiles"</code></pre>
+            
+            <p>Создайте директорию <code>static</code> в корне вашего проекта и добавьте в нее ваши статические файлы:</p>
+            
+            <div class="file-structure">
+                <pre>
+myproject/
+├── static/
+│   ├── css/
+│   │   └── style.css
+│   ├── js/
+│   │   └── script.js
+│   └── images/
+│       └── logo.png
+                </pre>
+            </div>
+            
+            <p>Для использования статических файлов в шаблонах:</p>
+            
+            <pre><code class="language-html">{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Django Site</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <img src="{% static 'images/logo.png' %}" alt="Logo">
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html></code></pre>
+            
+            <h3>Медиафайлы</h3>
+            <p>Настройки для медиафайлов находятся в файле <code>settings.py</code>:</p>
+            
+            <pre><code class="language-python">MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / "media"</code></pre>
+            
+            <p>Для обработки медиафайлов в режиме разработки добавьте следующий код в файл <code>urls.py</code> проекта:</p>
+            
+            <pre><code class="language-python">from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns = [
+    # ... ваши URL-шаблоны
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)</code></pre>
+        </section>
+        
+        <div class="quiz-container">
+            <h2>Проверьте свои знания</h2>
+            <div class="quiz" data-topic="project-creation">
+                <div class="question">
+                    <p>1. Какая команда используется для создания нового проекта Django?</p>
+                    <div class="options">
+                        <label><input type="radio" name="q1" value="a"> django startproject myproject</label>
+                        <label><input type="radio" name="q1" value="b"> django-admin startproject myproject</label>
+                        <label><input type="radio" name="q1" value="c"> python manage.py startproject myproject</label>
+                        <label><input type="radio" name="q1" value="d"> django-admin.py create myproject</label>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+                
+                <div class="question">
+                    <p>2. Какая команда используется для создания нового приложения в проекте Django?</p>
+                    <div class="options">
+                        <label><input type="radio" name="q2" value="a"> django-admin startapp myapp</label>
+                        <label><input type="radio" name="q2" value="b"> django startapp myapp</label>
+                        <label><input type="radio" name="q2" value="c"> python manage.py startapp myapp</label>
+                        <label><input type="radio" name="q2" value="d"> python manage.py createapp myapp</label>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+                
+                <div class="question">
+                    <p>3. Где в проекте Django хранятся настройки базы данных?</p>
+                    <div class="options">
+                        <label><input type="radio" name="q3" value="a"> В файле database.py</label>
+                        <label><input type="radio" name="q3" value="b"> В файле settings.py</label>
+                        <label><input type="radio" name="q3" value="c"> В файле config.py</label>
+                        <label><input type="radio" name="q3" value="d"> В файле db.py</label>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+                
+                <button class="check-answers">Проверить ответы</button>
+                <div class="quiz-results"></div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Шаблоны для остальных тем будут добавлены здесь -->
+
+    <script src="script.js"></script>
+</body>
+</html>
