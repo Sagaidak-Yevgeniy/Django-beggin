@@ -299,6 +299,15 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
+    // Клик по логотипу — переход на первую тему
+    const headerLogo = document.getElementById('header-logo');
+    if (headerLogo) {
+        headerLogo.addEventListener('click', function(e) {
+            e.preventDefault();
+            loadTopic(topics[0]);
+        });
+    }
+    
     // Переключение темы
     themeToggleBtn.addEventListener('click', toggleTheme);
     
