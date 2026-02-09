@@ -40,6 +40,23 @@
     color: #999;
 }
 
+.dark-theme .search-results {
+    background-color: #1e1e1e;
+    color: #f0f0f0;
+    border-color: #333;
+}
+
+.dark-theme .search-result-item {
+    color: #f0f0f0;
+    background-color: #1e1e1e;
+    border-bottom-color: #333;
+}
+
+.dark-theme .search-result-item:hover {
+    background-color: #2d2d2d;
+    color: #f0f0f0;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -123,7 +140,8 @@ header {
     top: 100%;
     left: 0;
     right: 0;
-    background-color: var(--bg-color);
+    background-color: #fff;
+    color: #333;
     border: 1px solid var(--border-color);
     border-radius: 4px;
     box-shadow: var(--shadow);
@@ -141,10 +159,13 @@ header {
     border-bottom: 1px solid var(--border-color);
     cursor: pointer;
     transition: var(--transition);
+    color: #333;
+    background-color: #fff;
 }
 
 .search-result-item:hover {
     background-color: var(--light-bg);
+    color: #333;
 }
 
 .theme-toggle {
