@@ -327,6 +327,186 @@ li {
     background-color: var(--light-bg);
 }
 
+/* === Современный учебник: блоки лекции === */
+.lesson-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--secondary-color), #2d8a6b);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.learning-goals {
+    background: linear-gradient(135deg, rgba(68, 183, 139, 0.12), rgba(9, 46, 32, 0.06));
+    border: 1px solid rgba(68, 183, 139, 0.3);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.learning-goals h3 {
+    margin-top: 0;
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.learning-goals ul {
+    margin: 0.75rem 0 0;
+    padding-left: 1.5rem;
+}
+
+.learning-goals li {
+    margin-bottom: 0.5rem;
+    position: relative;
+}
+
+.key-terms {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.75rem;
+    margin: 1rem 0;
+}
+
+.key-term {
+    background: var(--light-bg);
+    border-left: 4px solid var(--secondary-color);
+    padding: 0.75rem 1rem;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.95rem;
+}
+
+.key-term strong {
+    color: var(--primary-color);
+}
+
+.section-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--secondary-color);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.example-block {
+    background: var(--light-bg);
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin: 1.25rem 0;
+    border: 1px solid var(--border-color);
+}
+
+.example-block h4 {
+    margin-top: 0;
+    color: var(--secondary-color);
+    font-size: 1.1rem;
+}
+
+.example-step {
+    margin: 1rem 0;
+    padding-left: 1rem;
+    border-left: 3px solid var(--secondary-color);
+}
+
+.example-step strong {
+    color: var(--primary-color);
+}
+
+.practice-block {
+    margin: 2rem 0;
+}
+
+.practice-block h2 {
+    margin-bottom: 1rem;
+}
+
+.task-card {
+    background: var(--light-bg);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    margin: 1rem 0;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
+}
+
+.task-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: var(--secondary-color);
+    color: white;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin-right: 0.5rem;
+}
+
+.task-title {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.task-desc {
+    margin: 0.75rem 0;
+    line-height: 1.5;
+}
+
+.task-hint {
+    margin-top: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 193, 7, 0.15);
+    border-left: 4px solid var(--warning-color);
+    border-radius: 0 4px 4px 0;
+    font-size: 0.95rem;
+}
+
+.task-hint summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.task-criteria {
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+    color: var(--light-text);
+}
+
+.task-criteria strong {
+    color: var(--primary-color);
+}
+
+.chapter-summary {
+    background: linear-gradient(135deg, rgba(68, 183, 139, 0.1), rgba(9, 46, 32, 0.05));
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    margin: 2rem 0;
+    border: 1px solid rgba(68, 183, 139, 0.25);
+}
+
+.chapter-summary h2 {
+    margin-top: 0;
+    font-size: 1.3rem;
+}
+
+.checkpoint-label {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--secondary-color);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
 .companies-list {
     display: flex;
     flex-wrap: wrap;
